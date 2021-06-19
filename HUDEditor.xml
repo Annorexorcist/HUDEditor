@@ -80,7 +80,7 @@
 		A bit of a small explaination for the options:
 		RGB: Color you want in hex form (FFFFCB is the default HUD color)
 		NOTE: DO NOT use very dark or very bright colors! Try to pick something pastel or less in saturation.
-		Brightness, Contrast, Saturation: self explainatory.
+		Brightness, Contrast, Saturation: self explainatory. Absolute ranges are from -100 to 100, but -50 to 50 is the highly recommended min-max
 	-->
 	<Colors>
 		<!--Tints the hitmarker towards the given colour-->
@@ -93,6 +93,9 @@
 		</HitMarkerTint>
 		
 		<HUD>
+			<!--Set this to false to completely disable all HUD recoloring. Requires leaving/rejoining server to apply.-->
+			<EnableRecoloring>true</EnableRecoloring>
+			
 			<!--Show a percentage value above the thirst and hunger bars-->
 			<ThirstHungerPercentShow>true</ThirstHungerPercentShow>
 			
@@ -102,8 +105,11 @@
 			<!--Set CustomCrosshair to true if you have CustomCrosshair installed-->
 			<CustomCrosshair>true</CustomCrosshair>
 			
-			<!--You can set the opacity of the crosshair down past what the rest of the HUD is.-->
+			<!--You can set the opacity of the crosshair down below what the rest of the HUD is.-->
 			<CrosshairOpacity>1</CrosshairOpacity>
+			
+			<!--set this to true if you use TZMapMarkers. Disables the coloring of compass markers.-->
+			<TZMapMarkers>false</TZMapMarkers>
 		</HUD>
 		
 		<!--RightMeters are things like ammo, active effects, thirst/hunger, etc-->

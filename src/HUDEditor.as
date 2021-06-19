@@ -303,7 +303,7 @@ package
 		
 		private function initThirstHungerText():void
 		{
-			var thirstShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.75, 4, 4, 1, BitmapFilterQuality.HIGH, false, false, false);
+			var thirstShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.9, 3, 3, 1, BitmapFilterQuality.HIGH, false, false, false);
 			var thirstFormat:TextFormat = new TextFormat("$MAIN_Font_Bold", 20, 0xFFFFCB); //color: 16777163
 			thirst = new TextField();
 			thirstFormat.align = "center";
@@ -311,7 +311,7 @@ package
 			thirst.defaultTextFormat = thirstFormat;
 			thirst.setTextFormat(thirstFormat);
 			thirst.filters = [thirstShadow];
-			var hungerShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.75, 4, 4, 1, BitmapFilterQuality.HIGH, false, false, false);
+			var hungerShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.9, 3, 3, 1, BitmapFilterQuality.HIGH, false, false, false);
 			var hungerFormat:TextFormat = new TextFormat("$MAIN_Font_Bold", 20, 0xFFFFCB); //color: 16777163
 			hunger = new TextField();
 			hungerFormat.align = "center";
@@ -481,138 +481,145 @@ package
 			}
 
 			
-			
-			for (var ii:int = 0; ii < topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.numChildren; ii++)
+			if (xmlConfigHC.Colors.HUD.EnableRecoloring == "true")
 			{
-				if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 50)
+				for (var ii:int = 0; ii < topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.numChildren; ii++)
 				{
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 50)
+					{
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					}
+					else if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 2)
+					{
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					}
+					else if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 43)
+					{
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					}
+					else if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 66)
+					{
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					}
+					else
+					{
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = null;
+						topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = null;
+					}
 				}
-				else if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 2)
+				
+				if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.IsHostile == true)
 				{
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.OwnerInfo_mc.AccountIcon_mc.filters = null;
+					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.filters = [sneakDangerColorMatrix];
 				}
-				else if (topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(2).currentFrame == 66)
+				else if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.IsHostile == false)
 				{
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = [rightmetersInvColorMatrix];
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = [rightmetersInvColorMatrix];
+					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.OwnerInfo_mc.AccountIcon_mc.filters = [sneakDangerColorMatrix];
+					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.filters = null;
+				}
+				
+				
+				if (topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "CAUTION"
+				|| topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "DANGER")
+				{
+					topLevel.TopCenterGroup_mc.getChildAt(0).filters = [sneakDangerColorMatrix];
+				}
+				else if (topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "HIDDEN"
+				|| topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "DETECTED")
+				{
+					topLevel.TopCenterGroup_mc.getChildAt(0).filters = null;
+				}
+
+				comment("Team Panel");
+				teamNum = topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).numChildren;
+
+				if (teamNum == 1)
+				{
+					topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
+				}
+				else if (teamNum == 2)
+				{
+					topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
+					
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(15).filters = [teamInvColorMatrix];
+				}
+				else if (teamNum == 3)
+				{
+					topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
+					
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(15).filters = [teamInvColorMatrix];
+					
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(15).filters = [teamInvColorMatrix];
+				}
+				else if (teamNum == 4)
+				{
+					topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
+					topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
+					
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(15).filters = [teamInvColorMatrix];
+					
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(15).filters = [teamInvColorMatrix];
+					
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(9).filters = [teamradsColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(3).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(7).filters = [teamInvColorMatrix];
+					topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(15).filters = [teamInvColorMatrix];
 				}
 				else
 				{
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(0).filters = null;
-					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.getChildAt(ii).getChildAt(1).filters = null;
+					comment("do nothing here, fixes performance issues relating to no team panel showing");
 				}
-			}
-			
-			if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.IsHostile == true)
-			{
-				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.OwnerInfo_mc.AccountIcon_mc.filters = null;
-				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.filters = [sneakDangerColorMatrix];
-			}
-			else if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.IsHostile == false)
-			{
-				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.OwnerInfo_mc.AccountIcon_mc.filters = [sneakDangerColorMatrix];
-				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.filters = null;
-			}
-			
-			
-			if (topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "CAUTION"
-			|| topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "DANGER")
-			{
-				topLevel.TopCenterGroup_mc.getChildAt(0).filters = [sneakDangerColorMatrix];
-			}
-			else if (topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "HIDDEN"
-			|| topLevel.TopCenterGroup_mc.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).text == "DETECTED")
-			{
-				topLevel.TopCenterGroup_mc.getChildAt(0).filters = null;
-			}
-
-			comment("Team Panel");
-			teamNum = topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).numChildren;
-
-			if (teamNum == 1)
-			{
-				topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
-			}
-			else if (teamNum == 2)
-			{
-				topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
 				
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(15).filters = [teamInvColorMatrix];
-			}
-			else if (teamNum == 3)
-			{
-				topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
-				
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(15).filters = [teamInvColorMatrix];
-				
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(15).filters = [teamInvColorMatrix];
-			}
-			else if (teamNum == 4)
-			{
-				topLevel.PartyResolutionContainer_mc.filters = [teamColorMatrix];
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(0).textColor = 0xF5CB5B;
-				topLevel.PartyResolutionContainer_mc.HUDPartyListBase_mc.PTPartyListHeader_mc.getChildAt(1).getChildAt(1).textColor = 0xF5CB5B;
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(15).filters = [teamInvColorMatrix];
-				
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(1).getChildAt(15).filters = [teamInvColorMatrix];
-				
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(2).getChildAt(15).filters = [teamInvColorMatrix];
-				
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(9).filters = [teamradsColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(3).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(7).filters = [teamInvColorMatrix];
-				topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).getChildAt(3).getChildAt(15).filters = [teamInvColorMatrix];
-			}
-			else
-			{
-				comment("do nothing here, fixes performance issues relating to no team panel showing");
-			}
-			
-			topLevel.TeammateMarkerBase.filters = [floatingColorMatrix];
-			if (topLevel.TeammateMarkerBase.numChildren > 1)
-			{
-				for (var i:int = 1; i < topLevel.TeammateMarkerBase.numChildren; i++)
+				topLevel.TeammateMarkerBase.filters = [floatingColorMatrix];
+				if (topLevel.TeammateMarkerBase.numChildren > 1)
 				{
-					topLevel.TeammateMarkerBase.getChildAt(i).getChildAt(3).filters = [floatingInvColorMatrix];
+					for (var i:int = 1; i < topLevel.TeammateMarkerBase.numChildren; i++)
+					{
+						topLevel.TeammateMarkerBase.getChildAt(i).getChildAt(3).filters = [floatingInvColorMatrix];
+					}
 				}
 			}
 			if (xmlConfigHC.Elements != undefined)
@@ -688,7 +695,7 @@ package
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
 				{
-					watermark.visible = true;
+					watermark.visible = false;
 					watermark.text = "";
 					watermark.alpha = 0.35;
 					reloadCount = 0;
@@ -970,8 +977,6 @@ package
 		
 		private function initializeStaticElementsProps():void
 		{
-			topLevel.TopCenterGroup_mc.filters = [topcenterColorMatrix];
-			
 			const maxScale:Number = 1.5;
 			
 			if (xmlConfigHC.Elements != undefined)
@@ -1112,92 +1117,100 @@ package
 					topLevel.getChildAt(16).scaleY = 1;
 				}
 			}
+			if (xmlConfigHC.Colors.HUD.EnableRecoloring == "true")
+			{
+				topLevel.TopCenterGroup_mc.filters = [topcenterColorMatrix];
 
-			
-			try
-			{
-				topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Title_mc.Title_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Name_mc.Name_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Desc_mc.Desc_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceLocationDiscovered_mc.Area_mc.Area_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceLocationDiscovered_mc.Title_mc.Title_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestCompleteContainer_mc.FanfareName_mc.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestCompleteContainer_mc.FanfareType_mc.FanfareType_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestCompleteContainer_mc.FanfareDescription_mc.FanfareDescription_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.UniqueItemContainer_mc.FanfareName_mc.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.UniqueItemContainer_mc.FanfareDescription_mc.FanfareDescription_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceMessage_mc.Text_mc.Text_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceTextCenter_mc.textField_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Desc_mc.Desc_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Title_mc.Title_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Name_mc.Name_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc6.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc5.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc4.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc3.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc2.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc1.FanfareName_tf.textColor = "0x" + announceRGB1;
-				topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareType_mc.FanfareType_tf.textColor = "0x" + announceRGB1;
-			}
-			catch (e:Error)
-			{
-				displayText("Xml problem" + e.toString());
-			}
-			
-			topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
-			/* Haven't gotten this working correctly
-			if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
-			{
-				topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.filters = [bccompassInvColorMatrix];
-				topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = [bccompassInvColorMatrix];
-			}
-			else if (xmlConfigHC.Colors.HUD.TZMapMarkers == "false")
-			{
-				topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.filters = null;
-				topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = null;
-			}*/
-			topLevel.RightMeters_mc.filters = [rightmetersColorMatrix];
-			topLevel.RightMeters_mc.LocalEmote_mc.filters = [rightmetersInvColorMatrix];
-			
-			comment("CenterGroup > HitMarker ;)");
-			topLevel.CenterGroup_mc.getChildAt(4).filters = [hudColorHitMarkerMatrix];
-			
-			comment("CenterGroup > QuickContainer, HUDCrosshair, RolloverWidget");
-			topLevel.CenterGroup_mc.getChildAt(0).filters = [centerColorMatrix];
-			
-			if (xmlConfigHC.Colors.HUD.CustomCrosshair == "true")
-			{
-				topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = null;
-			}
-			else if (xmlConfigHC.Colors.HUD.CustomCrosshair == "false")
-			{
-				topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = [centerColorMatrix];
-			}
-			
-			topLevel.CenterGroup_mc.getChildAt(5).filters = [centerColorMatrix];
-			topLevel.CenterGroup_mc.getChildAt(1).alpha = Number(xmlConfigHC.Colors.HUD.CrosshairOpacity);
-			
-			topLevel.getChildAt(3).filters = [floatingColorMatrix];
-			topLevel.getChildAt(23).filters = [floatingColorMatrix];
+				try
+				{
+					topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Title_mc.Title_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Name_mc.Name_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Desc_mc.Desc_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceLocationDiscovered_mc.Area_mc.Area_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceLocationDiscovered_mc.Title_mc.Title_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestCompleteContainer_mc.FanfareName_mc.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestCompleteContainer_mc.FanfareType_mc.FanfareType_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestCompleteContainer_mc.FanfareDescription_mc.FanfareDescription_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.UniqueItemContainer_mc.FanfareName_mc.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.UniqueItemContainer_mc.FanfareDescription_mc.FanfareDescription_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceMessage_mc.Text_mc.Text_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceTextCenter_mc.textField_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Desc_mc.Desc_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Title_mc.Title_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.AnnounceActiveQuest_mc.Name_mc.Name_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc6.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc5.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc4.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc3.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc2.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareName_mc1.FanfareName_tf.textColor = "0x" + announceRGB1;
+					topLevel.AnnounceEventWidget_mc.QuestRewardContainer_mc.FanfareType_mc.FanfareType_tf.textColor = "0x" + announceRGB1;
+				}
+				catch (e:Error)
+				{
+					displayText("Xml problem" + e.toString());
+				}
+				
+				topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
+				if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
+				{
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = [bccompassInvColorMatrix];
+					for (var jj:int = 5; jj < topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.numChildren; jj++ )
+					{
+						topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jj).filters = [bccompassInvColorMatrix];
+					}
+				}
+				else if (xmlConfigHC.Colors.HUD.TZMapMarkers == "false")
+				{
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = null;
+					for (var jjj:int = 5; jjj < topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.numChildren; jjj++ )
+					{
+						topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jjj).filters = null;
+					}
+				}
 
-			comment("HudFrobber");
-			topLevel.getChildAt(10).filters = [frobberColorMatrix];
-			
-			comment("BottomCenterGroup > Subtitles, Crit Meter, sneakAttackMessage");
-			
-			topLevel.BottomCenterGroup_mc.SubtitleText_mc.filters = [bottomcenterColorMatrix];
-			topLevel.BottomCenterGroup_mc.CritMeter_mc.filters = [bottomcenterColorMatrix];
-			
-			
-			topLevel.TopRightGroup_mc.QuestTracker.filters = [trackerColorMatrix];
-			
-			topLevel.HUDNotificationsGroup_mc.Messages_mc.filters = [notiColorMatrix];
-			topLevel.HUDNotificationsGroup_mc.XPMeter_mc.filters = [notiColorMatrix];
-			
-			topLevel.LeftMeters_mc.getChildAt(0).getChildAt(2).getChildAt(0).getChildAt(0).filters = [radsbarColorMatrix];
-			topLevel.LeftMeters_mc.RadsMeter_mc.filters = [leftmetersInvColorMatrix];
-			topLevel.LeftMeters_mc.filters = [leftmetersColorMatrix];
-			
+				topLevel.RightMeters_mc.filters = [rightmetersColorMatrix];
+				topLevel.RightMeters_mc.LocalEmote_mc.filters = [rightmetersInvColorMatrix];
+				
+				comment("CenterGroup > HitMarker ;)");
+				topLevel.CenterGroup_mc.getChildAt(4).filters = [hudColorHitMarkerMatrix];
+				
+				comment("CenterGroup > QuickContainer, HUDCrosshair, RolloverWidget");
+				topLevel.CenterGroup_mc.getChildAt(0).filters = [centerColorMatrix];
+				
+				if (xmlConfigHC.Colors.HUD.CustomCrosshair == "true")
+				{
+					topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = null;
+				}
+				else if (xmlConfigHC.Colors.HUD.CustomCrosshair == "false")
+				{
+					topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = [centerColorMatrix];
+				}
+				
+				topLevel.CenterGroup_mc.getChildAt(5).filters = [centerColorMatrix];
+				topLevel.CenterGroup_mc.getChildAt(1).alpha = Number(xmlConfigHC.Colors.HUD.CrosshairOpacity);
+				
+				topLevel.getChildAt(3).filters = [floatingColorMatrix];
+				topLevel.getChildAt(23).filters = [floatingColorMatrix];
+
+				comment("HudFrobber");
+				topLevel.getChildAt(10).filters = [frobberColorMatrix];
+				
+				comment("BottomCenterGroup > Subtitles, Crit Meter, sneakAttackMessage");
+				
+				topLevel.BottomCenterGroup_mc.SubtitleText_mc.filters = [bottomcenterColorMatrix];
+				topLevel.BottomCenterGroup_mc.CritMeter_mc.filters = [bottomcenterColorMatrix];
+				
+				
+				topLevel.TopRightGroup_mc.QuestTracker.filters = [trackerColorMatrix];
+				
+				topLevel.HUDNotificationsGroup_mc.Messages_mc.filters = [notiColorMatrix];
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.filters = [notiColorMatrix];
+				
+				topLevel.LeftMeters_mc.getChildAt(0).getChildAt(2).getChildAt(0).getChildAt(0).filters = [radsbarColorMatrix];
+				topLevel.LeftMeters_mc.RadsMeter_mc.filters = [leftmetersInvColorMatrix];
+				topLevel.LeftMeters_mc.filters = [leftmetersColorMatrix];
+			}
 			reloadCount = 0;
 		}
 		
