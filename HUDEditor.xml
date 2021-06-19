@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<HUDEditor>
+	<Elements>
+		<!--
+			All X and Y positions are relative to their default position on the HUD.
+			X is left and right; Y is up and down.
+		-->
+		<!--Quickloot, annoyingly, applies to some containers rollover-->
+		<QuickLoot>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</QuickLoot>
+		<!--Frobber are interact prompts like unlicking locked doors and interacting with NPCs-->
+		<Frobber>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</Frobber>
+		<!--RollOver is essentially the same as Frobber (interact prompts)-->
+		<RollOver>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</RollOver>
+		<Compass>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</Compass>
+		<QuestTracker>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</QuestTracker>
+		<Notification>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</Notification>
+		<!--Health meter-->
+		<LeftMeter>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</LeftMeter>
+		<!--AP meter, active effects-->
+		<RightMeter>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</RightMeter>
+		<!--Sneaking meter (hidden, danger, etc)-->
+		<StealthMeter>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</StealthMeter>
+		<!--quest/event complete/rewards list-->
+		<Announce>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</Announce>
+		<!--team mate list-->
+		<TeamPanel>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</TeamPanel>
+		<!--Fusion core meter is part of RightMeters for some ungodly reason-->
+		<!--Take this into account when setting these numbers!-->
+		<FusionCoreMeter>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</FusionCoreMeter>
+	</Elements>
+	<!--
+		A bit of a small explaination for the options:
+		RGB: Color you want in hex form (FFFFCB is the default HUD color)
+		NOTE: DO NOT use very dark or very bright colors! Try to pick something pastel or less in saturation.
+		Brightness, Contrast, Saturation: self explainatory.
+	-->
+	<Colors>
+		<!--Tints the hitmarker towards the given colour-->
+		<!--KEEP IN MIND: the marker is red by default ingame-->
+		<HitMarkerTint>
+			<RGB>881111</RGB>
+			<Brightness>-10</Brightness>
+			<Contrast>10</Contrast>
+			<Saturation>10</Saturation>
+		</HitMarkerTint>
+		
+		<HUD>
+			<!--Show a percentage value above the thirst and hunger bars-->
+			<ThirstHungerPercentShow>true</ThirstHungerPercentShow>
+			
+			<!--EditMode allows you to view changes to this file in real time-->
+			<EditMode>false</EditMode>
+			
+			<!--Set CustomCrosshair to true if you have CustomCrosshair installed-->
+			<CustomCrosshair>true</CustomCrosshair>
+			
+			<!--You can set the opacity of the crosshair down past what the rest of the HUD is.-->
+			<CrosshairOpacity>1</CrosshairOpacity>
+		</HUD>
+		
+		<!--RightMeters are things like ammo, active effects, thirst/hunger, etc-->
+		<RightMeters>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</RightMeters>
+		
+		<!--LeftMeters is mainly health and rads-->
+		<LeftMeters>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
+			<RadsBarRGB>F67259</RadsBarRGB>
+		</LeftMeters>
+		
+		<!--Notifications are like Sneak damage etc-->
+		<Notifications>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</Notifications>
+		
+		<!--HudFrobber is the loot menu for world containers, NPC interaction prompt, doors etc-->
+		<HudFrobber>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</HudFrobber>
+		
+		<!--QuestTracker is the upper right quest panel-->
+		<QuestTracker>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</QuestTracker>
+		
+		<!--TopCenter is the enemy health/sneak bar-->
+		<TopCenter>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</TopCenter>
+		
+		<!--BottomCenter is Subtitles, Compass and Crit Meter-->
+		<BottomCenter>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+			
+			<CompassRGB>ffffcb</CompassRGB>
+			<CompassBrightness>0</CompassBrightness>
+			<CompassContrast>0</CompassContrast>
+			<CompassSaturation>0</CompassSaturation>
+		</BottomCenter>
+		
+		<!--Announce is the text of new events etc-->
+		<Announce>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</Announce>
+		
+		<!--Center is crosshair, quickloot, interaction menus of things not covered in HudFrobber-->
+		<Center>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</Center>
+		
+		<!--Team panel on HUD-->
+		<Team>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
+			<RadsBarRGB>F67259</RadsBarRGB>
+		</Team>
+		
+		<!--Floating handles things like the damage numbers, floating quest markers, etc-->
+		<Floating>
+			<RGB>ffffcb</RGB>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
+		</Floating>
+	</Colors>
+</HUDEditor>
+
