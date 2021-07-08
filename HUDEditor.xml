@@ -46,9 +46,48 @@
 		</LeftMeter>
 		<!--AP meter, active effects-->
 		<RightMeter>
-			<Scale>1</Scale>
-			<X>0</X>
-			<Y>0</Y>
+			<Parts>
+				<APMeter>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</APMeter>
+				<ActiveEffects>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</ActiveEffects>
+				<HungerMeter>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</HungerMeter>
+				<ThirstMeter>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</ThirstMeter>
+				<AmmoCount>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</AmmoCount>
+				<ExplosiveAmmoCount>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</ExplosiveAmmoCount>	
+				<FlashLightWidget>
+					<Scale>1</Scale>	
+					<X>0</X>
+					<Y>0</Y>
+				</FlashLightWidget>
+				<Emote>
+					<Scale>1</Scale>
+					<X>0</X>
+					<Y>0</Y>
+				</Emote>
+			</Parts>
 		</RightMeter>
 		<!--Sneaking meter (hidden, danger, etc)-->
 		<StealthMeter>
@@ -68,8 +107,6 @@
 			<X>0</X>
 			<Y>0</Y>
 		</TeamPanel>
-		<!--Fusion core meter is part of RightMeters for some ungodly reason-->
-		<!--Take this into account when setting these numbers!-->
 		<FusionCoreMeter>
 			<Scale>1</Scale>
 			<X>0</X>
@@ -87,9 +124,9 @@
 		<!--KEEP IN MIND: the marker is red by default ingame-->
 		<HitMarkerTint>
 			<RGB>881111</RGB>
-			<Brightness>-10</Brightness>
-			<Contrast>10</Contrast>
-			<Saturation>10</Saturation>
+			<Brightness>0</Brightness>
+			<Contrast>0</Contrast>
+			<Saturation>0</Saturation>
 		</HitMarkerTint>
 		
 		<HUD>
@@ -98,6 +135,9 @@
 			
 			<!--Show a percentage value above the thirst and hunger bars-->
 			<ThirstHungerPercentShow>true</ThirstHungerPercentShow>
+			
+			<!--Prevents thirst and hunger from auto-hiding after a few seconds-->
+			<AlwaysShowThirstHunger>false</AlwaysShowThirstHunger>
 			
 			<!--EditMode allows you to view changes to this file in real time-->
 			<EditMode>false</EditMode>

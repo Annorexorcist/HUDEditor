@@ -1,22 +1,13 @@
 package
 {
-   import Shared.AS3.Data.BSUIDataManager;
-   import Shared.AS3.Data.FromClientDataEvent;
-   import Shared.GlobalFunc;
-   import flash.display.MovieClip;
-   import flash.events.Event;
-   import flash.events.TimerEvent;
-   import flash.filters.ColorMatrixFilter;
-   import flash.filters.DropShadowFilter;
-   import flash.geom.Point;
-   import flash.net.URLLoader;
-   import flash.net.URLRequest;
-   import flash.text.TextField;
-   import flash.text.TextFormat;
-   import flash.utils.Timer;
-   import flash.utils.getQualifiedClassName;
-   import flash.filters.BitmapFilterQuality;
-   import flash.text.TextFieldAutoSize;
+   import Shared.AS3.Data.*;
+   import flash.display.*;
+   import flash.events.*;
+   import flash.filters.*;
+   import flash.geom.*;
+   import flash.net.*;
+   import flash.text.*;
+   import flash.utils.*;
   
 
 	/**
@@ -136,8 +127,22 @@ package
 		public var NotificationPos:Point = new Point ();
 		public var LeftMeterScale:Number = 1;
 		public var LeftMeterPos:Point = new Point ();
-		public var RightMeterScale:Number = 1;
-		public var RightMeterPos:Point = new Point ();
+		public var APMeterScale:Number = 1;
+		public var APMeterPos:Point = new Point ();
+		public var ActiveEffectsScale:Number = 1;
+		public var ActiveEffectsPos:Point = new Point ();
+		public var HungerMeterScale:Number = 1;
+		public var HungerMeterPos:Point = new Point ();
+		public var ThirstMeterScale:Number = 1;
+		public var ThirstMeterPos:Point = new Point ();
+		public var AmmoCountScale:Number = 1;
+		public var AmmoCountPos:Point = new Point ();
+		public var ExplosiveAmmoCountScale:Number = 1;
+		public var ExplosiveAmmoCountPos:Point = new Point ();
+		public var FlashLightWidgetScale:Number = 1;
+		public var FlashLightWidgetPos:Point = new Point ();
+		public var EmoteScale:Number = 1;
+		public var EmotePos:Point = new Point ();
 		public var FusionScale:Number = 1;
 		public var FusionPos:Point = new Point ();
 		public var CompassScale:Number = 1;
@@ -180,7 +185,14 @@ package
 		private static var hudColorHitMarkerMatrix:ColorMatrixFilter = null;
 		
 		private var oLeftMeterPos:Point = new Point();
-		private var oRightMeterPos:Point = new Point();
+		private var oAPMeterPos:Point = new Point();
+		private var oActiveEffectsPos:Point = new Point();
+		private var oHungerMeterPos:Point = new Point();
+		private var oThirstMeterPos:Point = new Point();
+		private var oAmmoCountPos:Point = new Point();
+		private var oExplosiveAmmoCountPos:Point = new Point();
+		private var oFlashLightWidgetPos:Point = new Point();
+		private var oEmotePos:Point = new Point();
 		private var oCompassPos:Point = new Point();
 		private var oAnnouncePos:Point = new Point();
 		private var oNotificationPos:Point = new Point();
@@ -191,10 +203,10 @@ package
 		private var oTeamPanelPos:Point = new Point();
 		private var oFusionPos:Point = new Point();
 		private var oRollOverPos:Point = new Point();
+		private var VisibilityChanged:int = 0;
 		
 		private var _CharInfo:Object;
-
-		
+		private var _TargetInfo:Object;
 		public function HUDEditor() 
 		{
 			updateTimerHC = new Timer(20, 0);
@@ -211,14 +223,37 @@ package
 			topLevel = stage.getChildAt(0);
 			if(topLevel != null && getQualifiedClassName(topLevel) == "HUDMenu")
 			{
+				stage.addChild(debugTextHC);
+				stage.addChild(watermark);
 				oLeftMeterPos.x = topLevel.LeftMeters_mc.x;
 				oLeftMeterPos.y = topLevel.LeftMeters_mc.y;
 
-				oRightMeterPos.x = topLevel.RightMeters_mc.x;
-				oRightMeterPos.y = topLevel.RightMeters_mc.y;
+				oAPMeterPos.x = topLevel.RightMeters_mc.ActionPointMeter_mc.x;
+				oAPMeterPos.y = topLevel.RightMeters_mc.ActionPointMeter_mc.y;
+				
+				oActiveEffectsPos.x = topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.x;
+				oActiveEffectsPos.y = topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.y;
+				
+				oHungerMeterPos.x = topLevel.RightMeters_mc.HUDHungerMeter_mc.x;
+				oHungerMeterPos.y = topLevel.RightMeters_mc.HUDHungerMeter_mc.y;
+				
+				oThirstMeterPos.x = topLevel.RightMeters_mc.HUDThirstMeter_mc.x;
+				oThirstMeterPos.y = topLevel.RightMeters_mc.HUDThirstMeter_mc.y;
+				
+				oAmmoCountPos.x = topLevel.RightMeters_mc.AmmoCount_mc.x;
+				oAmmoCountPos.y = topLevel.RightMeters_mc.AmmoCount_mc.y;
+				
+				oExplosiveAmmoCountPos.x = topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.x;
+				oExplosiveAmmoCountPos.y = topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.y;
+				
+				oFlashLightWidgetPos.x = topLevel.RightMeters_mc.FlashLightWidget_mc.x;
+				oFlashLightWidgetPos.y = topLevel.RightMeters_mc.FlashLightWidget_mc.y;
+				
+				oEmotePos.x = topLevel.RightMeters_mc.LocalEmote_mc.x;
+				oEmotePos.y = topLevel.RightMeters_mc.LocalEmote_mc.y;
 
-				oCompassPos.x = topLevel.getChildAt(8).getChildAt(0).x;
-				oCompassPos.y = topLevel.getChildAt(8).getChildAt(0).y;
+				oCompassPos.x = topLevel.BottomCenterGroup_mc.CompassWidget_mc.x;
+				oCompassPos.y = topLevel.BottomCenterGroup_mc.CompassWidget_mc.y;
 
 				oAnnouncePos.x = topLevel.AnnounceEventWidget_mc.x;
 				oAnnouncePos.y = topLevel.AnnounceEventWidget_mc.y;
@@ -229,11 +264,11 @@ package
 				oQuestPos.x = topLevel.TopRightGroup_mc.QuestTracker.x;
 				oQuestPos.y = topLevel.TopRightGroup_mc.QuestTracker.y;
 
-				oSneakPos.x = topLevel.TopCenterGroup_mc.getChildAt(0).x;
-				oSneakPos.y = topLevel.TopCenterGroup_mc.getChildAt(0).y;
+				oSneakPos.x = topLevel.TopCenterGroup_mc.StealthMeter_mc.x;
+				oSneakPos.y = topLevel.TopCenterGroup_mc.StealthMeter_mc.y;
 
-				oQuickLootPos.x = topLevel.CenterGroup_mc.getChildAt(0).x;
-				oQuickLootPos.y = topLevel.CenterGroup_mc.getChildAt(0).y;
+				oQuickLootPos.x = topLevel.CenterGroup_mc.QuickContainerWidget_mc.x;
+				oQuickLootPos.y = topLevel.CenterGroup_mc.QuickContainerWidget_mc.y;
 				
 				oTeamPanelPos.x = topLevel.getChildAt(16).x;
 				oTeamPanelPos.y = topLevel.getChildAt(16).y;
@@ -263,8 +298,7 @@ package
 		
 		private function init():void
 		{
-			stage.addChild(debugTextHC);
-			stage.addChild(watermark);
+			//displayText("INIT PASSED");
 			xmlLoaderHC = new URLLoader();
 			xmlLoaderHC.addEventListener(Event.COMPLETE, onFileLoad);
 			loadConfig();
@@ -286,6 +320,7 @@ package
 			debugTextHC.filters = [debugTextHCShadow];
 			debugTextHC.visible = true;
 		}
+		
 		
 		private function initWatermarkText():void
 		{
@@ -329,6 +364,7 @@ package
 			try
 			{
 				xmlLoaderHC.load(new URLRequest("../HUDEditor.xml"));
+				//displayText("CONFIG LOADED");
 				return;
 			}
 			catch (error:Error)
@@ -340,8 +376,8 @@ package
 		
 		private function onFileLoad(e:Event):void
 		{
-			
 			Shared.AS3.Data.BSUIDataManager.Subscribe("HUDRightMetersData", onCharInfoUpd);
+			Shared.AS3.Data.BSUIDataManager.Subscribe("QuestTrackerData", onTargetUpd);
 			initCommands(e.target.data);
 			updateTimerHC.addEventListener(TimerEvent.TIMER_COMPLETE, update);
 			updateTimerHC.start();
@@ -353,10 +389,43 @@ package
 			_CharInfo = _arg1.data;
 		}
 		
+		private function onTargetUpd(_arg1:FromClientDataEvent):*
+		{
+			_TargetInfo = _arg1.data;
+		}
 		
 		private function update(event:TimerEvent):void
 		{
+			/*debugTextHC.text = "";
+			/*var temptar:Object = _TargetInfo.quests[0];
+			for (var id:String in temptar)
+			{
+				var value:Object = temptar[id];
+				var valTemp:*= id + " = " + value;
+				displayText(valTemp);
+			}
 			
+			for (var dd:int = 0; dd < topLevel.numChildren; dd++ )
+			{
+				displayText(dd.toString() + " " + topLevel.getChildAt(dd).toString());
+
+			}*/
+			if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow != undefined)
+			{
+				
+				if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "true")
+				{
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop(7);
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop(7);
+					VisibilityChanged = 1;
+				}
+				else if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "false" && VisibilityChanged == 1)
+				{
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop("rollOff");
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop("rollOff");
+					VisibilityChanged = 0;
+				}
+			}
 			if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow != undefined)
 			{
 				if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow == "true")
@@ -480,7 +549,7 @@ package
 				}
 			}
 
-			
+
 			if (xmlConfigHC.Colors.HUD.EnableRecoloring == "true")
 			{
 				for (var ii:int = 0; ii < topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.ClipHolderInternal.numChildren; ii++)
@@ -633,8 +702,30 @@ package
 				topLevel.LeftMeters_mc.y = (oLeftMeterPos.y + LeftMeterPos.y);
 					
 				//RightMeters
-				topLevel.RightMeters_mc.x = (oRightMeterPos.x + RightMeterPos.x);
-				topLevel.RightMeters_mc.y = (oRightMeterPos.y + RightMeterPos.y);
+
+				topLevel.RightMeters_mc.ActionPointMeter_mc.x = (oAPMeterPos.x + APMeterPos.x);
+				topLevel.RightMeters_mc.ActionPointMeter_mc.y = (oAPMeterPos.y + APMeterPos.y);
+
+				topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.x = (oActiveEffectsPos.x + ActiveEffectsPos.x);
+				topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.y = (oActiveEffectsPos.y + ActiveEffectsPos.y);
+
+				topLevel.RightMeters_mc.HUDHungerMeter_mc.x = (oHungerMeterPos.x + HungerMeterPos.x);
+				topLevel.RightMeters_mc.HUDHungerMeter_mc.y = (oHungerMeterPos.y + HungerMeterPos.y);
+
+				topLevel.RightMeters_mc.HUDThirstMeter_mc.x = (oThirstMeterPos.x + ThirstMeterPos.x);
+				topLevel.RightMeters_mc.HUDThirstMeter_mc.y = (oThirstMeterPos.y + ThirstMeterPos.y);
+
+				topLevel.RightMeters_mc.AmmoCount_mc.x = (oAmmoCountPos.x + AmmoCountPos.x);
+				topLevel.RightMeters_mc.AmmoCount_mc.y = (oAmmoCountPos.y + AmmoCountPos.y);
+
+				topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.x = (oExplosiveAmmoCountPos.x + ExplosiveAmmoCountPos.x);
+				topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.y = (oExplosiveAmmoCountPos.y + ExplosiveAmmoCountPos.y);
+
+				topLevel.RightMeters_mc.FlashLightWidget_mc.x = (oFlashLightWidgetPos.x + FlashLightWidgetPos.x);
+				topLevel.RightMeters_mc.FlashLightWidget_mc.y = (oFlashLightWidgetPos.y + FlashLightWidgetPos.y);
+
+				topLevel.RightMeters_mc.LocalEmote_mc.x = (oEmotePos.x + EmotePos.x);
+				topLevel.RightMeters_mc.LocalEmote_mc.y = (oEmotePos.y + EmotePos.y);
 				
 				//QuickLoot
 				var tfTemp:* = topLevel.CenterGroup_mc.QuickContainerWidget_mc.ListHeaderAndBracket_mc.ContainerName_mc.textField_tf.getTextFormat();
@@ -656,8 +747,8 @@ package
 				topLevel.CenterGroup_mc.RolloverWidget_mc.y = (oRollOverPos.y + RollOverPos.y);
 				
 				//Compass
-				topLevel.getChildAt(8).getChildAt(0).x = (oCompassPos.x + CompassPos.x);
-				topLevel.getChildAt(8).getChildAt(0).y = (oCompassPos.y + CompassPos.y);
+				topLevel.BottomCenterGroup_mc.CompassWidget_mc.x = (oCompassPos.x + CompassPos.x);
+				topLevel.BottomCenterGroup_mc.CompassWidget_mc.y = (oCompassPos.y + CompassPos.y);
 				
 				//AnnounceScale
 				topLevel.AnnounceEventWidget_mc.x = (oAnnouncePos.x + AnnouncePos.x);
@@ -682,16 +773,15 @@ package
 				
 			if (xmlConfigHC.Colors.HUD.EditMode != undefined)
 			{
-				watermark.x = 4;
-				watermark.y = stage.stageHeight - watermark.height;
+				watermark.x = stage.stageWidth - (watermark.width + 4);
+				watermark.y = 0;
 				var color1:* = "0x" + rightmetersRGB1;
 				watermark.textColor = color1;
 				if (xmlConfigHC.Colors.HUD.EditMode == "true" && reloadCount == 150)
 				{
 					reloadXML();
 					watermark.visible = true;
-					watermark.text = "HUDEditor v2.0 EDIT MODE";
-					//watermark.text = "HUDEditor 0618-test EDIT MODE";
+					watermark.text = "HUDEditor v2.1 EDIT MODE";
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
 				{
@@ -834,9 +924,38 @@ package
 				LeftMeterPos.y = xmlConfigHC.Elements.LeftMeter.Y;
 				
 				//RightMeter
-				RightMeterScale = xmlConfigHC.Elements.RightMeter.Scale;
-				RightMeterPos.x = xmlConfigHC.Elements.RightMeter.X;
-				RightMeterPos.y = xmlConfigHC.Elements.RightMeter.Y;
+				
+				APMeterScale = xmlConfigHC.Elements.RightMeter.Parts.APMeter.Scale;
+				APMeterPos.x = xmlConfigHC.Elements.RightMeter.Parts.APMeter.X;
+				APMeterPos.y = xmlConfigHC.Elements.RightMeter.Parts.APMeter.Y;
+				
+				ActiveEffectsScale = xmlConfigHC.Elements.RightMeter.Parts.ActiveEffects.Scale;
+				ActiveEffectsPos.x = xmlConfigHC.Elements.RightMeter.Parts.ActiveEffects.X;
+				ActiveEffectsPos.y = xmlConfigHC.Elements.RightMeter.Parts.ActiveEffects.Y;
+				
+				HungerMeterScale = xmlConfigHC.Elements.RightMeter.Parts.HungerMeter.Scale;
+				HungerMeterPos.x = xmlConfigHC.Elements.RightMeter.Parts.HungerMeter.X;
+				HungerMeterPos.y = xmlConfigHC.Elements.RightMeter.Parts.HungerMeter.Y;
+				
+				ThirstMeterScale = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.Scale;
+				ThirstMeterPos.x = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.X;
+				ThirstMeterPos.y = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.Y;
+				
+				AmmoCountScale = xmlConfigHC.Elements.RightMeter.Parts.AmmoCount.Scale;
+				AmmoCountPos.x = xmlConfigHC.Elements.RightMeter.Parts.AmmoCount.X;
+				AmmoCountPos.y = xmlConfigHC.Elements.RightMeter.Parts.AmmoCount.Y;
+				
+				ExplosiveAmmoCountScale = xmlConfigHC.Elements.RightMeter.Parts.ExplosiveAmmoCount.Scale;
+				ExplosiveAmmoCountPos.x = xmlConfigHC.Elements.RightMeter.Parts.ExplosiveAmmoCount.X;
+				ExplosiveAmmoCountPos.y = xmlConfigHC.Elements.RightMeter.Parts.ExplosiveAmmoCount.Y;
+				
+				FlashLightWidgetScale = xmlConfigHC.Elements.RightMeter.Parts.FlashLightWidget.Scale;
+				FlashLightWidgetPos.x = xmlConfigHC.Elements.RightMeter.Parts.FlashLightWidget.X;
+				FlashLightWidgetPos.y = xmlConfigHC.Elements.RightMeter.Parts.FlashLightWidget.Y;
+				
+				EmoteScale = xmlConfigHC.Elements.RightMeter.Parts.Emote.Scale;
+				EmotePos.x = xmlConfigHC.Elements.RightMeter.Parts.Emote.X;
+				EmotePos.y = xmlConfigHC.Elements.RightMeter.Parts.Emote.Y;
 				
 				//Announce
 				AnnounceScale = xmlConfigHC.Elements.Announce.Scale;
@@ -977,19 +1096,20 @@ package
 		
 		private function initializeStaticElementsProps():void
 		{
+			//displayText("1");
 			const maxScale:Number = 1.5;
 			
 			if (xmlConfigHC.Elements != undefined)
 			{
 				if (SneakMeterScale <= maxScale)
 				{
-					topLevel.TopCenterGroup_mc.getChildAt(0).scaleX = SneakMeterScale;
-					topLevel.TopCenterGroup_mc.getChildAt(0).scaleY = SneakMeterScale;
+					topLevel.TopCenterGroup_mc.StealthMeter_mc.scaleX = SneakMeterScale;
+					topLevel.TopCenterGroup_mc.StealthMeter_mc.scaleY = SneakMeterScale;
 				}
 				else
 				{
-					topLevel.TopCenterGroup_mc.getChildAt(0).scaleX = 1;
-					topLevel.TopCenterGroup_mc.getChildAt(0).scaleY = 1;
+					topLevel.TopCenterGroup_mc.StealthMeter_mc.scaleX = 1;
+					topLevel.TopCenterGroup_mc.StealthMeter_mc.scaleY = 1;
 				}
 				
 				if (FusionScale <= maxScale)
@@ -1003,18 +1123,95 @@ package
 					topLevel.RightMeters_mc.HUDFusionCoreMeter_mc.scaleY = 1;
 				}
 
-				if (RightMeterScale <= maxScale)
+				if (APMeterScale <= maxScale)
 				{
-					topLevel.RightMeters_mc.scaleX = RightMeterScale;
-					topLevel.RightMeters_mc.scaleY = RightMeterScale;
+					topLevel.RightMeters_mc.ActionPointMeter_mc.scaleX = APMeterScale;
+					topLevel.RightMeters_mc.ActionPointMeter_mc.scaleY = APMeterScale;
 				}
 				else
 				{
-					topLevel.RightMeters_mc.scaleX = 1;
-					topLevel.RightMeters_mc.scaleY = 1;
+					topLevel.RightMeters_mc.ActionPointMeter_mc.scaleX = 1;
+					topLevel.RightMeters_mc.ActionPointMeter_mc.scaleY = 1;
+				}
+				
+				if (ActiveEffectsScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.scaleX = ActiveEffectsScale;
+					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.scaleY = ActiveEffectsScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.scaleX = 1;
+					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.scaleY = 1;
+				}
+				
+				if (HungerMeterScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = HungerMeterScale;
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = HungerMeterScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = 1;
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = 1;
+				}
+				
+				if (ThirstMeterScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = ThirstMeterScale;
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = ThirstMeterScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = 1;
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = 1;
+				}
+				
+				if (AmmoCountScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.AmmoCount_mc.scaleX = AmmoCountScale;
+					topLevel.RightMeters_mc.AmmoCount_mc.scaleY = AmmoCountScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.AmmoCount_mc.scaleX = 1;
+					topLevel.RightMeters_mc.AmmoCount_mc.scaleY = 1;
+				}
+				
+				if (ExplosiveAmmoCountScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = ExplosiveAmmoCountScale;
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = ExplosiveAmmoCountScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = 1;
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = 1;
+				}
+				
+				if (FlashLightWidgetScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.FlashLightWidget_mc.scaleX = FlashLightWidgetScale;
+					topLevel.RightMeters_mc.FlashLightWidget_mc.scaleY = FlashLightWidgetScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.FlashLightWidget_mc.scaleX = 1;
+					topLevel.RightMeters_mc.FlashLightWidget_mc.scaleY = 1;
+				}
+				
+				if (EmoteScale <= maxScale)
+				{
+					topLevel.RightMeters_mc.LocalEmote_mc.scaleX = EmoteScale;
+					topLevel.RightMeters_mc.LocalEmote_mc.scaleY = EmoteScale;
+				}
+				else
+				{
+					topLevel.RightMeters_mc.LocalEmote_mc.scaleX = 1;
+					topLevel.RightMeters_mc.LocalEmote_mc.scaleY = 1;
 				}
 
-				if (QuickLootScale <= maxScale )
+				if (QuickLootScale <= maxScale)
 				{
 					topLevel.CenterGroup_mc.QuickContainerWidget_mc.scaleX = QuickLootScale;
 					topLevel.CenterGroup_mc.QuickContainerWidget_mc.scaleY = QuickLootScale;
@@ -1026,7 +1223,7 @@ package
 					topLevel.CenterGroup_mc.QuickContainerWidget_mc.scaleY = 1;
 				}
 				
-				if (FrobberScale <= maxScale )
+				if (FrobberScale <= maxScale)
 				{
 					topLevel.FrobberWidget_mc.scaleX = FrobberScale;
 					topLevel.FrobberWidget_mc.scaleY = FrobberScale;
@@ -1037,7 +1234,7 @@ package
 					topLevel.FrobberWidget_mc.scaleY = 1;
 				}
 
-				if (RollOverScale <= maxScale )
+				if (RollOverScale <= maxScale)
 				{
 					topLevel.CenterGroup_mc.RolloverWidget_mc.scaleX = RollOverScale;
 					topLevel.CenterGroup_mc.RolloverWidget_mc.scaleY = RollOverScale;
@@ -1049,15 +1246,15 @@ package
 					topLevel.CenterGroup_mc.RolloverWidget_mc.scaleY = 1;
 				}
 				
-				if (CompassScale <= maxScale )
+				if (CompassScale <= maxScale)
 				{
-					topLevel.getChildAt(8).getChildAt(0).scaleX = CompassScale;
-					topLevel.getChildAt(8).getChildAt(0).scaleY = CompassScale;
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.scaleX = CompassScale;
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.scaleY = CompassScale;
 				}
 				else
 				{
-					topLevel.getChildAt(8).getChildAt(0).scaleX = 1;
-					topLevel.getChildAt(8).getChildAt(0).scaleY = 1;
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.scaleX = 1;
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.scaleY = 1;
 				}
 
 
@@ -1105,7 +1302,7 @@ package
 					topLevel.AnnounceEventWidget_mc.scaleX = 1;
 					topLevel.AnnounceEventWidget_mc.scaleY = 1;
 				}
-				
+				//displayText("team");
 				if (TeamPanelScale <= maxScale)
 				{
 					topLevel.getChildAt(16).scaleX = TeamPanelScale;
@@ -1117,6 +1314,7 @@ package
 					topLevel.getChildAt(16).scaleY = 1;
 				}
 			}
+			//displayText("fbehjwfbgwuefvuwevbfuwvhjg");
 			if (xmlConfigHC.Colors.HUD.EnableRecoloring == "true")
 			{
 				topLevel.TopCenterGroup_mc.filters = [topcenterColorMatrix];
@@ -1173,7 +1371,7 @@ package
 				topLevel.RightMeters_mc.LocalEmote_mc.filters = [rightmetersInvColorMatrix];
 				
 				comment("CenterGroup > HitMarker ;)");
-				topLevel.CenterGroup_mc.getChildAt(4).filters = [hudColorHitMarkerMatrix];
+				topLevel.CenterGroup_mc.HitIndicator_mc.filters = [hudColorHitMarkerMatrix];
 				
 				comment("CenterGroup > QuickContainer, HUDCrosshair, RolloverWidget");
 				topLevel.CenterGroup_mc.getChildAt(0).filters = [centerColorMatrix];
@@ -1190,11 +1388,11 @@ package
 				topLevel.CenterGroup_mc.getChildAt(5).filters = [centerColorMatrix];
 				topLevel.CenterGroup_mc.getChildAt(1).alpha = Number(xmlConfigHC.Colors.HUD.CrosshairOpacity);
 				
-				topLevel.getChildAt(3).filters = [floatingColorMatrix];
-				topLevel.getChildAt(23).filters = [floatingColorMatrix];
+				topLevel.DamageNumbers_mc.filters = [floatingColorMatrix];
+				topLevel.FloatingTargetManager_mc.filters = [floatingColorMatrix];
 
 				comment("HudFrobber");
-				topLevel.getChildAt(10).filters = [frobberColorMatrix];
+				topLevel.FrobberWidget_mc.filters = [frobberColorMatrix];
 				
 				comment("BottomCenterGroup > Subtitles, Crit Meter, sneakAttackMessage");
 				
@@ -1211,6 +1409,7 @@ package
 				topLevel.LeftMeters_mc.RadsMeter_mc.filters = [leftmetersInvColorMatrix];
 				topLevel.LeftMeters_mc.filters = [leftmetersColorMatrix];
 			}
+			
 			reloadCount = 0;
 		}
 		
