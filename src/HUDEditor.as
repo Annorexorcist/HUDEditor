@@ -24,7 +24,7 @@ package
 		private var topLevel:* = null;
 		private var xmlConfigHC:XML;
 		private var xmlLoaderHC:URLLoader;
-		private var updateTimerHC:Timer;  
+		private var updateTimerHC:Timer;
 
 		private var debugTextHC:TextField;
 		private var watermark:TextField;
@@ -212,7 +212,8 @@ package
 			updateTimerHC = new Timer(20, 0);
 			initDebugText();
 			initWatermarkText();
-			initThirstHungerText();
+			initThirstText();
+			initHungerText();
 			addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			trace("HUDEditor Started");
 			
@@ -223,8 +224,6 @@ package
 			topLevel = stage.getChildAt(0);
 			if(topLevel != null && getQualifiedClassName(topLevel) == "HUDMenu")
 			{
-				stage.addChild(debugTextHC);
-				stage.addChild(watermark);
 				oLeftMeterPos.x = topLevel.LeftMeters_mc.x;
 				oLeftMeterPos.y = topLevel.LeftMeters_mc.y;
 
@@ -298,7 +297,8 @@ package
 		
 		private function init():void
 		{
-			//displayText("INIT PASSED");
+			stage.addChild(debugTextHC);
+			stage.addChild(watermark);
 			xmlLoaderHC = new URLLoader();
 			xmlLoaderHC.addEventListener(Event.COMPLETE, onFileLoad);
 			loadConfig();
@@ -336,7 +336,7 @@ package
 			watermark.alpha = 0.65;
 		}
 		
-		private function initThirstHungerText():void
+		private function initThirstText():void
 		{
 			var thirstShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.9, 3, 3, 1, BitmapFilterQuality.HIGH, false, false, false);
 			var thirstFormat:TextFormat = new TextFormat("$MAIN_Font_Bold", 20, 0xFFFFCB); //color: 16777163
@@ -346,6 +346,11 @@ package
 			thirst.defaultTextFormat = thirstFormat;
 			thirst.setTextFormat(thirstFormat);
 			thirst.filters = [thirstShadow];
+			thirst.autoSize = TextFieldAutoSize.CENTER;
+		}
+		
+		private function initHungerText():void 
+		{
 			var hungerShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.9, 3, 3, 1, BitmapFilterQuality.HIGH, false, false, false);
 			var hungerFormat:TextFormat = new TextFormat("$MAIN_Font_Bold", 20, 0xFFFFCB); //color: 16777163
 			hunger = new TextField();
@@ -354,7 +359,6 @@ package
 			hunger.defaultTextFormat = hungerFormat;
 			hunger.setTextFormat(hungerFormat);
 			hunger.filters = [hungerShadow];
-			thirst.autoSize = TextFieldAutoSize.CENTER;
 			hunger.autoSize = TextFieldAutoSize.CENTER;
 		}
 		
@@ -364,7 +368,6 @@ package
 			try
 			{
 				xmlLoaderHC.load(new URLRequest("../HUDEditor.xml"));
-				//displayText("CONFIG LOADED");
 				return;
 			}
 			catch (error:Error)
@@ -377,7 +380,6 @@ package
 		private function onFileLoad(e:Event):void
 		{
 			Shared.AS3.Data.BSUIDataManager.Subscribe("HUDRightMetersData", onCharInfoUpd);
-			Shared.AS3.Data.BSUIDataManager.Subscribe("QuestTrackerData", onTargetUpd);
 			initCommands(e.target.data);
 			updateTimerHC.addEventListener(TimerEvent.TIMER_COMPLETE, update);
 			updateTimerHC.start();
@@ -389,155 +391,85 @@ package
 			_CharInfo = _arg1.data;
 		}
 		
-		private function onTargetUpd(_arg1:FromClientDataEvent):*
-		{
-			_TargetInfo = _arg1.data;
-		}
-		
 		private function update(event:TimerEvent):void
 		{
-			/*debugTextHC.text = "";
-			/*var temptar:Object = _TargetInfo.quests[0];
-			for (var id:String in temptar)
+			if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "true")
 			{
-				var value:Object = temptar[id];
-				var valTemp:*= id + " = " + value;
-				displayText(valTemp);
+				topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop(7);
+				topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop(7);
+				VisibilityChanged = 1;
+			}
+			else if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "false" && VisibilityChanged == 1)
+			{
+				topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop("rollOff");
+				topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop("rollOff");
+				VisibilityChanged = 0;
 			}
 			
-			for (var dd:int = 0; dd < topLevel.numChildren; dd++ )
-			{
-				displayText(dd.toString() + " " + topLevel.getChildAt(dd).toString());
-
-			}*/
-			if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow != undefined)
-			{
-				
-				if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "true")
-				{
-					topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop(7);
-					topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop(7);
-					VisibilityChanged = 1;
-				}
-				else if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "false" && VisibilityChanged == 1)
-				{
-					topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop("rollOff");
-					topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop("rollOff");
-					VisibilityChanged = 0;
-				}
-			}
-			if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow != undefined)
+			try
 			{
 				if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow == "true")
 				{
-					thirst.visible = topLevel.RightMeters_mc.HUDThirstMeter_mc.visible;
-					hunger.visible = topLevel.RightMeters_mc.HUDHungerMeter_mc.visible;
-					
-					thirst.maxChars = 5;
-					hunger.maxChars = 5;
-					
 					var thirstPC:* = this._CharInfo.thirstPercent;
 					var hungerPC:* = this._CharInfo.hungerPercent;
 					
-					thirst.text = (Math.round(thirstPC * 100)).toString() + "%";
-					hunger.text = (Math.round(hungerPC * 100)).toString() + "%";
+					var thirstFinal:String = (Math.round(thirstPC * 100)).toString() + "%";
+					var hungerFinal:String = (Math.round(hungerPC * 100)).toString() + "%";
 					
-					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 8)
-					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.2;
-					}
-					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 8)
-					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.2;
-					}
-					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 9)
-					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.4;
-					}
-					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 9)
-					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.4;
-					}
-					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 10)
-					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.6;
-					}
-					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 10)
-					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.6;
-					}
+					thirst.text = thirstFinal;
+					hunger.text = hungerFinal;
+					
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 11)
 					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.8;
+						thirst.visible = false;
 					}
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 11)
 					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.8;
+						hunger.visible = false;
 					}
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 12)
 					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.95;
+						thirst.visible = false;
 					}
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 12)
 					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.95;
+						hunger.visible = false;
 					}
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 13)
 					{
-						thirst.alpha = 0;
+						thirst.visible = false;
 					}
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 13)
 					{
-						hunger.alpha = 0;
+						hunger.visible = false;
 					}
 					
-					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 2)
-					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.95;
-					}
-					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 2)
-					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.95;
-					}
-					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 3)
-					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.8;
-					}
-					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 3)
-					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.8;
-					}
-					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 4)
-					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.6;
-					}
-					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 4)
-					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.6;
-					}
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 5)
 					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.4;
+						thirst.visible = true;
 					}
+					
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 5)
 					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.4;
+						hunger.visible = true;
 					}
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 6)
 					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha / 1.1;
+						thirst.visible = true;
 					}
+					
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 6)
 					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha / 1.1;
+						hunger.visible = true;
 					}
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 7)
 					{
-						thirst.alpha = topLevel.RightMeters_mc.HUDThirstMeter_mc.alpha;
+						thirst.visible = true;
 					}
+					
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 7)
 					{
-						hunger.alpha = topLevel.RightMeters_mc.HUDHungerMeter_mc.alpha;
+						hunger.visible = true;
 					}
 				}
 				else if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow == "false")
@@ -547,6 +479,10 @@ package
 					thirst.text = "";
 					hunger.text = "";
 				}
+			}
+			catch (e:Error)
+			{
+				//nothing
 			}
 
 
@@ -581,12 +517,12 @@ package
 					}
 				}
 				
-				if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.IsHostile == true)
+				if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.currentFrame < 5)
 				{
 					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.OwnerInfo_mc.AccountIcon_mc.filters = null;
 					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.filters = [sneakDangerColorMatrix];
 				}
-				else if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.IsHostile == false)
+				else if (topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.currentFrame > 5)
 				{
 					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.OwnerInfo_mc.AccountIcon_mc.filters = [sneakDangerColorMatrix];
 					topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.filters = null;
@@ -604,7 +540,7 @@ package
 					topLevel.TopCenterGroup_mc.getChildAt(0).filters = null;
 				}
 
-				comment("Team Panel");
+				//Team Panel
 				teamNum = topLevel.getChildAt(16).getChildAt(0).getChildAt(1).getChildAt(0).getChildAt(1).numChildren;
 
 				if (teamNum == 1)
@@ -679,7 +615,7 @@ package
 				}
 				else
 				{
-					comment("do nothing here, fixes performance issues relating to no team panel showing");
+					//do nothing here, fixes performance issues relating to no team panel showing
 				}
 				
 				topLevel.TeammateMarkerBase.filters = [floatingColorMatrix];
@@ -781,7 +717,7 @@ package
 				{
 					reloadXML();
 					watermark.visible = true;
-					watermark.text = "HUDEditor v2.1 EDIT MODE";
+					watermark.text = "HUDEditor v2.1.1 EDIT MODE";
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
 				{
@@ -1096,7 +1032,6 @@ package
 		
 		private function initializeStaticElementsProps():void
 		{
-			//displayText("1");
 			const maxScale:Number = 1.5;
 			
 			if (xmlConfigHC.Elements != undefined)
@@ -1302,7 +1237,6 @@ package
 					topLevel.AnnounceEventWidget_mc.scaleX = 1;
 					topLevel.AnnounceEventWidget_mc.scaleY = 1;
 				}
-				//displayText("team");
 				if (TeamPanelScale <= maxScale)
 				{
 					topLevel.getChildAt(16).scaleX = TeamPanelScale;
@@ -1314,7 +1248,6 @@ package
 					topLevel.getChildAt(16).scaleY = 1;
 				}
 			}
-			//displayText("fbehjwfbgwuefvuwevbfuwvhjg");
 			if (xmlConfigHC.Colors.HUD.EnableRecoloring == "true")
 			{
 				topLevel.TopCenterGroup_mc.filters = [topcenterColorMatrix];
@@ -1370,10 +1303,10 @@ package
 				topLevel.RightMeters_mc.filters = [rightmetersColorMatrix];
 				topLevel.RightMeters_mc.LocalEmote_mc.filters = [rightmetersInvColorMatrix];
 				
-				comment("CenterGroup > HitMarker ;)");
+				//CenterGroup > HitMarker ;)
 				topLevel.CenterGroup_mc.HitIndicator_mc.filters = [hudColorHitMarkerMatrix];
 				
-				comment("CenterGroup > QuickContainer, HUDCrosshair, RolloverWidget");
+				//CenterGroup > QuickContainer, HUDCrosshair, RolloverWidget
 				topLevel.CenterGroup_mc.getChildAt(0).filters = [centerColorMatrix];
 				
 				if (xmlConfigHC.Colors.HUD.CustomCrosshair == "true")
@@ -1391,10 +1324,10 @@ package
 				topLevel.DamageNumbers_mc.filters = [floatingColorMatrix];
 				topLevel.FloatingTargetManager_mc.filters = [floatingColorMatrix];
 
-				comment("HudFrobber");
+				//HudFrobber
 				topLevel.FrobberWidget_mc.filters = [frobberColorMatrix];
 				
-				comment("BottomCenterGroup > Subtitles, Crit Meter, sneakAttackMessage");
+				//BottomCenterGroup > Subtitles, Crit Meter, sneakAttackMessage
 				
 				topLevel.BottomCenterGroup_mc.SubtitleText_mc.filters = [bottomcenterColorMatrix];
 				topLevel.BottomCenterGroup_mc.CritMeter_mc.filters = [bottomcenterColorMatrix];
@@ -1429,12 +1362,6 @@ package
 		private function displayText(_text:String):void
 		{
 			debugTextHC.text += _text + "\n";
-		}
-
-		private function comment(_text:String):void
-		{
-			//lets me comment in the code so when people inspect it they can see the comment
-			return;
 		}
 	}
 	
