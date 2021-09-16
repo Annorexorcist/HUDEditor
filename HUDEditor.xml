@@ -43,6 +43,12 @@
 			<Scale>1</Scale>
 			<X>0</X>
 			<Y>0</Y>
+			<!--Shows/hides the "HP" text to the left of the HP meter-->
+			<ShowHPLabel>true</ShowHPLabel>
+			<!--Moves the HP text to the left or right of the meter-->
+			<HPLabelSide>left</HPLabelSide>
+			<!--Shows/hides the HP bar background. Looks strange with ImprovedHealthBar, not a bug.-->
+			<ShowBarBG>true</ShowBarBG>
 		</LeftMeter>
 		<!--AP meter, active effects-->
 		<RightMeter>
@@ -51,6 +57,12 @@
 					<Scale>1</Scale>
 					<X>0</X>
 					<Y>0</Y>
+					<!--Shows/hides the "AP" text-->
+					<ShowAPLabel>true</ShowAPLabel>
+					<!--Moves the AP text to the left or right of the meter-->
+					<APLabelSide>right</APLabelSide>
+					<!--Shows/hides the AP bar background-->
+					<ShowBarBG>true</ShowBarBG>
 				</APMeter>
 				<ActiveEffects>
 					<Scale>1</Scale>
@@ -112,6 +124,16 @@
 			<X>0</X>
 			<Y>0</Y>
 		</FusionCoreMeter>
+		<Subtitles>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</Subtitles>
+		<EnemyHealthMeter>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</EnemyHealthMeter>
 	</Elements>
 	<!--
 		A bit of a small explaination for the options:
@@ -124,9 +146,9 @@
 		<!--KEEP IN MIND: the marker is red by default ingame-->
 		<HitMarkerTint>
 			<RGB>881111</RGB>
-			<Brightness>0</Brightness>
-			<Contrast>0</Contrast>
-			<Saturation>0</Saturation>
+			<Brightness>-10</Brightness>
+			<Contrast>10</Contrast>
+			<Saturation>10</Saturation>
 		</HitMarkerTint>
 		
 		<HUD>
@@ -134,7 +156,7 @@
 			<EnableRecoloring>true</EnableRecoloring>
 			
 			<!--Show a percentage value above the thirst and hunger bars-->
-			<ThirstHungerPercentShow>true</ThirstHungerPercentShow>
+			<ThirstHungerPercentShow>false</ThirstHungerPercentShow>
 			
 			<!--Prevents thirst and hunger from auto-hiding after a few seconds-->
 			<AlwaysShowThirstHunger>false</AlwaysShowThirstHunger>
@@ -143,7 +165,7 @@
 			<EditMode>false</EditMode>
 			
 			<!--Set CustomCrosshair to true if you have CustomCrosshair installed-->
-			<CustomCrosshair>true</CustomCrosshair>
+			<CustomCrosshair>false</CustomCrosshair>
 			
 			<!--You can set the opacity of the crosshair down below what the rest of the HUD is.-->
 			<CrosshairOpacity>1</CrosshairOpacity>
@@ -154,7 +176,7 @@
 		
 		<!--RightMeters are things like ammo, active effects, thirst/hunger, etc-->
 		<RightMeters>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -162,17 +184,20 @@
 		
 		<!--LeftMeters is mainly health and rads-->
 		<LeftMeters>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
 			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
 			<RadsBarRGB>F67259</RadsBarRGB>
+			<RadsBarBrightness>-10</RadsBarBrightness>
+			<RadsBarContrast>0</RadsBarContrast>
+			<RadsBarSaturation>0</RadsBarSaturation>
 		</LeftMeters>
 		
 		<!--Notifications are like Sneak damage etc-->
 		<Notifications>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -180,7 +205,7 @@
 		
 		<!--HudFrobber is the loot menu for world containers, NPC interaction prompt, doors etc-->
 		<HudFrobber>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -188,7 +213,7 @@
 		
 		<!--QuestTracker is the upper right quest panel-->
 		<QuestTracker>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -196,7 +221,7 @@
 		
 		<!--TopCenter is the enemy health/sneak bar-->
 		<TopCenter>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -204,12 +229,12 @@
 		
 		<!--BottomCenter is Subtitles, Compass and Crit Meter-->
 		<BottomCenter>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
 			
-			<CompassRGB>ffffcb</CompassRGB>
+			<CompassRGB>FFFFCB</CompassRGB>
 			<CompassBrightness>0</CompassBrightness>
 			<CompassContrast>0</CompassContrast>
 			<CompassSaturation>0</CompassSaturation>
@@ -217,7 +242,7 @@
 		
 		<!--Announce is the text of new events etc-->
 		<Announce>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -225,7 +250,7 @@
 		
 		<!--Center is crosshair, quickloot, interaction menus of things not covered in HudFrobber-->
 		<Center>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
@@ -233,17 +258,20 @@
 		
 		<!--Team panel on HUD-->
 		<Team>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
 			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
 			<RadsBarRGB>F67259</RadsBarRGB>
+			<RadsBarBrightness>-10</RadsBarBrightness>
+			<RadsBarContrast>0</RadsBarContrast>
+			<RadsBarSaturation>0</RadsBarSaturation>
 		</Team>
 		
 		<!--Floating handles things like the damage numbers, floating quest markers, etc-->
 		<Floating>
-			<RGB>ffffcb</RGB>
+			<RGB>FFFFCB</RGB>
 			<Brightness>0</Brightness>
 			<Contrast>0</Contrast>
 			<Saturation>0</Saturation>
