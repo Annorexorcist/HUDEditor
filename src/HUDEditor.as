@@ -8,6 +8,7 @@ package
    import flash.net.*;
    import flash.text.*;
    import flash.utils.*;
+   import Shared.GlobalFunc;
   
 
 	/**
@@ -20,6 +21,11 @@ package
 	
 	public class HUDEditor extends MovieClip 
 	{
+		[Embed(source = "hudmenu.swf", symbol = "HUDMessageItemBox")]
+
+		private var HUDMessageItemBox:Class;
+		
+		private const PercentMax:Number = 1.0;
 		
 		private var topLevel:* = null;
 		private var xmlConfigHC:XML;
@@ -101,6 +107,9 @@ package
 		private var teamContrast:Number = 0;
 		private var teamSaturation:Number = 0;
 		private var teamRGB1:* = "00ff00";
+		private var teamRadsBrightness:Number = 0;
+		private var teamRadsContrast:Number = 0;
+		private var teamRadsSaturation:Number = 0;
 		private var teamRadsRGB:* = "ff0000";
 		public var hudHUEteamrads:Number = 0;
 		public var hudHUEteam:Number = 0;
@@ -157,6 +166,11 @@ package
 		public var FrobberPos:Point = new Point ();
 		public var RollOverScale:Number = 1;
 		public var RollOverPos:Point = new Point ();
+		public var SubtitlesScale:Number = 1;
+		public var SubtitlesPos:Point = new Point ();
+		public var EnemyHealthScale:Number = 1;
+		public var EnemyHealthPos:Point = new Point ();
+
 		private var reloadCount:int = 0;
 		
 		private static var rightmetersColorMatrix:ColorMatrixFilter = null;
@@ -203,13 +217,24 @@ package
 		private var oTeamPanelPos:Point = new Point();
 		private var oFusionPos:Point = new Point();
 		private var oRollOverPos:Point = new Point();
+		private var oSubtitlePos:Point = new Point();
+		private var oEnemyHealthPos:Point = new Point();
 		private var VisibilityChanged:int = 0;
 		
 		private var _CharInfo:Object;
-		private var _TargetInfo:Object;
+		
+		private var thpShow:String = "";
+		
+		private var thirstPC:Number = 0;
+		private var hungerPC:Number = 0;
+		
+		private var HUDNotification_mc:Object = new HUDEditor_HUDMessageItemBox;
+		private var EventCloseTimer:Timer;
+		
 		public function HUDEditor() 
 		{
 			updateTimerHC = new Timer(20, 0);
+			EventCloseTimer = new Timer(15000,0);
 			initDebugText();
 			initWatermarkText();
 			initThirstText();
@@ -281,16 +306,36 @@ package
 				oFusionPos.x = topLevel.RightMeters_mc.HUDFusionCoreMeter_mc.x;
 				oFusionPos.y = topLevel.RightMeters_mc.HUDFusionCoreMeter_mc.y;
 				
+				oSubtitlePos.x = topLevel.BottomCenterGroup_mc.SubtitleText_mc.x;
+				oSubtitlePos.y = topLevel.BottomCenterGroup_mc.SubtitleText_mc.y;
+				
+				oEnemyHealthPos.x = topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.x;
+				oEnemyHealthPos.y = topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.y;
+				
 				topLevel.RightMeters_mc.HUDThirstMeter_mc.addChild(thirst);
 				topLevel.RightMeters_mc.HUDHungerMeter_mc.addChild(hunger);
+				
+				topLevel.HUDNotificationsGroup_mc.Messages_mc.addChild(HUDNotification_mc);
+				HUDNotification_mc.y += 150;
+				HUDNotification_mc.addFrameScript(0, frame1, 5, frame2, 15, frame3, 16, frame3, 170, frame4);
+				HUDNotification_mc.gotoAndStop("Reset");
+
 				
 				hunger.x = 240;
 				thirst.x = 240;
 				
+				Shared.AS3.Data.BSUIDataManager.Subscribe("HUDRightMetersData", onCharInfoUpd);
+
+				
+				init();
+			}
+			else if(topLevel != null && getQualifiedClassName(topLevel) == "MainMenu")
+			{
 				init();
 			}
 			else
 			{
+				
 				displayText("Not injected into supported SWF. Current: " + getQualifiedClassName(topLevel));
 			}
 		}
@@ -308,7 +353,7 @@ package
 		{
 			var debugTextHCShadow:DropShadowFilter = new DropShadowFilter(1, 45, 0x000000, 0.75, 4, 4, 1, BitmapFilterQuality.HIGH, false, false, false);
 			debugTextHC = new TextField();
-			var debugTextHCFormat:TextFormat = new TextFormat("$MAIN_Font_Light", 18, 0xF0F0F0); //color: 16777163
+			var debugTextHCFormat:TextFormat = new TextFormat("$MAIN_Font_Light", 10, 0xF0F0F0); //color: 16777163
 			debugTextHCFormat.align = "left";
 			debugTextHC.defaultTextFormat = debugTextHCFormat;
 			debugTextHC.setTextFormat(debugTextHCFormat);
@@ -372,19 +417,19 @@ package
 			}
 			catch (error:Error)
 			{
-				displayText("Error finding HUDColours configuration file. " + error.message.toString());
+				displayText("Error finding HUDEditor configuration file. " + error.message.toString());
 				return;
 			}
 		}
 		
 		private function onFileLoad(e:Event):void
 		{
-			Shared.AS3.Data.BSUIDataManager.Subscribe("HUDRightMetersData", onCharInfoUpd);
 			initCommands(e.target.data);
 			updateTimerHC.addEventListener(TimerEvent.TIMER_COMPLETE, update);
 			updateTimerHC.start();
 			xmlLoaderHC.removeEventListener(Event.COMPLETE, onFileLoad);
 		}
+		
 		
 		private function onCharInfoUpd(_arg1:FromClientDataEvent):*
 		{
@@ -393,7 +438,35 @@ package
 		
 		private function update(event:TimerEvent):void
 		{
-			if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "true")
+			topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
+			if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
+			{
+				topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = [bccompassInvColorMatrix];
+				for (var jj:int = 5; jj < topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.numChildren; jj++ )
+				{
+					topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jj).filters = [bccompassInvColorMatrix];
+				}
+			}
+			else if (xmlConfigHC.Colors.HUD.TZMapMarkers == "false")
+			{
+				topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = null;
+				for (var jjj:int = 5; jjj < topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.numChildren; jjj++ )
+				{
+					if (topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jjj).currentFrameLabel == "Enemy")
+					{
+						topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jjj).filters = [bccompassInvColorMatrix];
+					}
+					else
+					{
+						topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jjj).filters = null;
+					}
+				}
+			}
+
+			
+			thpShow = xmlConfigHC.Colors.HUD.ThirstHungerPercentShow;
+				
+			if (xmlConfigHC.Colors.HUD.AlwaysShowThirstHunger == "true") 
 			{
 				topLevel.RightMeters_mc.HUDThirstMeter_mc.gotoAndStop(7);
 				topLevel.RightMeters_mc.HUDHungerMeter_mc.gotoAndStop(7);
@@ -406,73 +479,105 @@ package
 				VisibilityChanged = 0;
 			}
 			
+			var linenum:*= 0;
 			try
 			{
-				if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow == "true")
+				
+				if (thpShow == "true")
 				{
-					var thirstPC:* = this._CharInfo.thirstPercent;
-					var hungerPC:* = this._CharInfo.hungerPercent;
+					linenum = 1;
+					thirstPC = _CharInfo.thirstPercent;
 					
-					var thirstFinal:String = (Math.round(thirstPC * 100)).toString() + "%";
-					var hungerFinal:String = (Math.round(hungerPC * 100)).toString() + "%";
+					linenum = 2;
+					hungerPC = _CharInfo.hungerPercent;
 					
-					thirst.text = thirstFinal;
-					hunger.text = hungerFinal;
+					linenum = 3;
+					var thirstFinal:Number = GlobalFunc.Clamp(thirstPC,0,this.PercentMax) / this.PercentMax;
 					
+					linenum = 4;
+					var hungerFinal:Number = GlobalFunc.Clamp(hungerPC,0,this.PercentMax) / this.PercentMax;
+					
+					linenum = 5;
+					var thirTemp:Number = Math.round((Math.ceil(thirstPC * topLevel.RightMeters_mc.HUDThirstMeter_mc.Meter_mc.totalFrames) * 2) / 10);
+					thirst.text = thirTemp.toString() + "%";
+					
+					linenum = 6;
+					var hungTemp:Number = Math.round((Math.ceil(hungerPC * topLevel.RightMeters_mc.HUDHungerMeter_mc.Meter_mc.totalFrames) * 2) / 10);
+					hunger.text = hungTemp.toString() + "%";
+					
+					linenum = 7;
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 11)
 					{
 						thirst.visible = false;
 					}
+					
+					linenum = 8;
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 11)
 					{
 						hunger.visible = false;
 					}
+					
+					linenum = 9;
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 12)
 					{
 						thirst.visible = false;
 					}
+					
+					linenum = 10;
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 12)
 					{
 						hunger.visible = false;
 					}
+					
+					linenum = 11;
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 13)
 					{
 						thirst.visible = false;
 					}
+					
+					linenum = 12;
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 13)
 					{
 						hunger.visible = false;
 					}
 					
+					linenum = 13;
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 5)
 					{
 						thirst.visible = true;
 					}
 					
+					linenum = 14;
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 5)
 					{
 						hunger.visible = true;
 					}
+					
+					linenum = 15;
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 6)
 					{
 						thirst.visible = true;
 					}
 					
+					linenum = 16;
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 6)
 					{
 						hunger.visible = true;
 					}
+					
+					linenum = 17;
 					if (topLevel.RightMeters_mc.HUDThirstMeter_mc.currentFrame == 7)
 					{
 						thirst.visible = true;
 					}
 					
+					linenum = 18;
 					if (topLevel.RightMeters_mc.HUDHungerMeter_mc.currentFrame == 7)
 					{
 						hunger.visible = true;
 					}
 				}
-				else if (xmlConfigHC.Colors.HUD.ThirstHungerPercentShow == "false")
+				else if (thpShow == "false")
 				{
 					thirst.visible = false;
 					hunger.visible = false;
@@ -482,7 +587,8 @@ package
 			}
 			catch (e:Error)
 			{
-				//nothing
+				if (e.toString() != "TypeError: Error #1009")
+					displayText("XML problem (resourcemeters): " + e.toString() + "," + linenum);
 			}
 
 
@@ -686,7 +792,7 @@ package
 				topLevel.BottomCenterGroup_mc.CompassWidget_mc.x = (oCompassPos.x + CompassPos.x);
 				topLevel.BottomCenterGroup_mc.CompassWidget_mc.y = (oCompassPos.y + CompassPos.y);
 				
-				//AnnounceScale
+				//Announce
 				topLevel.AnnounceEventWidget_mc.x = (oAnnouncePos.x + AnnouncePos.x);
 				topLevel.AnnounceEventWidget_mc.y = (oAnnouncePos.y + AnnouncePos.y);
 				
@@ -705,6 +811,12 @@ package
 				//Fusion Core Meter (part of HUDRightMeters for some ungodly reason)
 				topLevel.RightMeters_mc.HUDFusionCoreMeter_mc.x = (oFusionPos.x + FusionPos.x);
 				topLevel.RightMeters_mc.HUDFusionCoreMeter_mc.y = (oFusionPos.y + FusionPos.y);
+				
+				topLevel.BottomCenterGroup_mc.SubtitleText_mc.x = (oSubtitlePos.x + SubtitlesPos.x);
+				topLevel.BottomCenterGroup_mc.SubtitleText_mc.y = (oSubtitlePos.y + SubtitlesPos.y);
+				
+				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.x = (oEnemyHealthPos.x + EnemyHealthPos.x);
+				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.y = (oEnemyHealthPos.y + EnemyHealthPos.y);
 			}
 				
 			if (xmlConfigHC.Colors.HUD.EditMode != undefined)
@@ -717,14 +829,31 @@ package
 				{
 					reloadXML();
 					watermark.visible = true;
-					watermark.text = "HUDEditor v2.1.1 EDIT MODE";
+					CONFIG::debug
+					{
+						watermark.text = "HUDEditor v2.3pre EDIT MODE";
+					}
+					CONFIG::release
+					{
+						watermark.text = "HUDEditor v2.3 EDIT MODE";
+					}
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
 				{
-					watermark.visible = false;
-					watermark.text = "";
-					watermark.alpha = 0.35;
-					reloadCount = 0;
+					CONFIG::debug
+					{
+						watermark.visible = true;
+						watermark.text = "HUDEditor v2.3pre TEST BUILD";
+						watermark.alpha = 0.30;
+						reloadCount = 0;
+					}
+					CONFIG::release
+					{
+						watermark.visible = false;
+						watermark.text = "";
+						watermark.alpha = 0;
+						reloadCount = 0;
+					}
 				}
 				else
 				{
@@ -750,9 +879,9 @@ package
 			leftmetersSaturation = Number(xmlConfigHC.Colors.LeftMeters.Saturation);
 			leftmetersRGB1 = xmlConfigHC.Colors.LeftMeters.RGB;
 			
-			radsbarBrightness = Number(xmlConfigHC.Colors.LeftMeters.Brightness);
-			radsbarContrast = Number(xmlConfigHC.Colors.LeftMeters.Contrast);
-			radsbarSaturation = Number(xmlConfigHC.Colors.LeftMeters.Saturation);
+			radsbarBrightness = Number(xmlConfigHC.Colors.LeftMeters.RadsBarBrightness);
+			radsbarContrast = Number(xmlConfigHC.Colors.LeftMeters.RadsBarContrast);
+			radsbarSaturation = Number(xmlConfigHC.Colors.LeftMeters.RadsBarSaturation);
 			radsbarRGB = xmlConfigHC.Colors.LeftMeters.RadsBarRGB;
 			
 			notiBrightness = Number(xmlConfigHC.Colors.Noti.Brightness);
@@ -808,6 +937,13 @@ package
 			teamBrightness = Number(xmlConfigHC.Colors.Team.Brightness);
 			teamContrast = Number(xmlConfigHC.Colors.Team.Contrast);
 			teamSaturation = Number(xmlConfigHC.Colors.Team.Saturation);
+			teamRGB1 = xmlConfigHC.Colors.Team.RGB;
+			teamRadsBrightness = Number(xmlConfigHC.Colors.Team.RadsBarBrightness);
+			teamRadsContrast = Number(xmlConfigHC.Colors.Team.RadsBarContrast);
+			teamRadsSaturation = Number(xmlConfigHC.Colors.Team.RadsBarSaturation);
+			teamRadsRGB = xmlConfigHC.Colors.Team.RadsBarRGB;
+			
+
 			teamRGB1 = xmlConfigHC.Colors.Team.RGB;
 			teamRadsRGB = xmlConfigHC.Colors.Team.RadsBarRGB;
 			
@@ -928,6 +1064,32 @@ package
 				RollOverScale = xmlConfigHC.Elements.RollOver.Scale;
 				RollOverPos.x = xmlConfigHC.Elements.RollOver.X;
 				RollOverPos.y = xmlConfigHC.Elements.RollOver.Y;
+				
+				if (xmlConfigHC.Elements.Subtitles.Scale != undefined)
+					SubtitlesScale = xmlConfigHC.Elements.Subtitles.Scale;
+					
+				if (xmlConfigHC.Elements.Subtitles.X != undefined)
+					SubtitlesPos.x = xmlConfigHC.Elements.Subtitles.X;
+				else
+					SubtitlesPos.x = 0;
+					
+				if (xmlConfigHC.Elements.Subtitles.Y != undefined)
+					SubtitlesPos.y = xmlConfigHC.Elements.Subtitles.Y;
+				else
+					SubtitlesPos.y = 0;
+					
+				if (xmlConfigHC.Elements.EnemyHealthMeter.Scale != undefined)
+					EnemyHealthScale = xmlConfigHC.Elements.EnemyHealthMeter.Scale;
+					
+				if (xmlConfigHC.Elements.EnemyHealthMeter.X != undefined)
+					EnemyHealthPos.x = xmlConfigHC.Elements.EnemyHealthMeter.X;
+				else
+					EnemyHealthPos.x = 0;
+					
+				if (xmlConfigHC.Elements.EnemyHealthMeter.Y != undefined)
+					EnemyHealthPos.y = xmlConfigHC.Elements.EnemyHealthMeter.Y;
+				else
+					EnemyHealthPos.y = 0;
 			}
 			var hudHUEradsbarfinal:* = hudHUEradsbar - hudHUEleftmeters;
 			var hudHUEteamradsbarfinal:* = hudHUEteamrads - hudHUEteam;
@@ -1017,7 +1179,7 @@ package
 			
 			teamInvColorMatrix = ColorMath.getColorChangeFilter(-teamBrightness, -teamContrast, tempSatTeam, -hudHUEteam + 60);
 			
-			teamradsColorMatrix = ColorMath.getColorChangeFilter(teamBrightness, teamContrast, teamSaturation, hudHUEteamradsbarfinal + 60);
+			teamradsColorMatrix = ColorMath.getColorChangeFilter(teamRadsBrightness, teamRadsContrast, teamRadsSaturation, hudHUEteamradsbarfinal + 60);
 			
 			floatingColorMatrix = ColorMath.getColorChangeFilter(floatingBrightness, floatingContrast, floatingSaturation, hudHUEfloating - 60);
 			
@@ -1191,7 +1353,36 @@ package
 					topLevel.BottomCenterGroup_mc.CompassWidget_mc.scaleX = 1;
 					topLevel.BottomCenterGroup_mc.CompassWidget_mc.scaleY = 1;
 				}
-
+				
+				if (xmlConfigHC.Elements.Subtitles.Scale != undefined)
+				{
+					if (SubtitlesScale <= maxScale)
+					{
+						topLevel.BottomCenterGroup_mc.SubtitleText_mc.scaleX = SubtitlesScale;
+						topLevel.BottomCenterGroup_mc.SubtitleText_mc.scaleY = SubtitlesScale;
+					}
+					else
+					{
+						topLevel.BottomCenterGroup_mc.SubtitleText_mc.scaleX = 1;
+						topLevel.BottomCenterGroup_mc.SubtitleText_mc.scaleY = 1;
+					}
+				}
+				
+				if (xmlConfigHC.Elements.EnemyHealthMeter.Scale != undefined)
+				{
+					if (EnemyHealthScale <= maxScale)
+					{
+						topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.scaleX = EnemyHealthScale;
+						topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.scaleY = EnemyHealthScale;
+					}
+					else
+					{
+						topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.scaleX = 1;
+						topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.scaleY = 1;
+					}
+				}
+				
+				
 
 				if (LeftMeterScale <= maxScale)
 				{
@@ -1279,26 +1470,9 @@ package
 				}
 				catch (e:Error)
 				{
-					displayText("Xml problem" + e.toString());
+					displayText("XML problem (Announce): " + e.toString());
 				}
 				
-				topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
-				if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
-				{
-					topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = [bccompassInvColorMatrix];
-					for (var jj:int = 5; jj < topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.numChildren; jj++ )
-					{
-						topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jj).filters = [bccompassInvColorMatrix];
-					}
-				}
-				else if (xmlConfigHC.Colors.HUD.TZMapMarkers == "false")
-				{
-					topLevel.BottomCenterGroup_mc.CompassWidget_mc.QuestMarkerHolder_mc.filters = null;
-					for (var jjj:int = 5; jjj < topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.numChildren; jjj++ )
-					{
-						topLevel.BottomCenterGroup_mc.CompassWidget_mc.OtherMarkerHolder_mc.getChildAt(jjj).filters = null;
-					}
-				}
 
 				topLevel.RightMeters_mc.filters = [rightmetersColorMatrix];
 				topLevel.RightMeters_mc.LocalEmote_mc.filters = [rightmetersInvColorMatrix];
@@ -1308,6 +1482,37 @@ package
 				
 				//CenterGroup > QuickContainer, HUDCrosshair, RolloverWidget
 				topLevel.CenterGroup_mc.getChildAt(0).filters = [centerColorMatrix];
+				
+				
+				if (xmlConfigHC.Elements.LeftMeter.ShowHPLabel == "false")
+					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.DisplayText_tf.text = "";
+				else if (xmlConfigHC.Elements.LeftMeter.ShowHPLabel == "true")
+					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.DisplayText_tf.text = "HP";
+					
+				if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowAPLabel == "false")
+					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.DisplayText_tf.text = "";
+				else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowAPLabel == "true")
+					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.DisplayText_tf.text = "AP";
+					
+				if (xmlConfigHC.Elements.LeftMeter.ShowBarBG == "false")
+					topLevel.LeftMeters_mc.HPMeter_mc.getChildAt(0).visible = false;
+				else if (xmlConfigHC.Elements.LeftMeter.ShowBarBG == "true")
+					topLevel.LeftMeters_mc.HPMeter_mc.getChildAt(0).visible = true;
+					
+				if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowBarBG == "false")
+					topLevel.RightMeters_mc.ActionPointMeter_mc.APBarFrame_mc.visible = false;
+				else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowBarBG == "true")
+					topLevel.RightMeters_mc.ActionPointMeter_mc.APBarFrame_mc.visible = true;
+					
+				if (xmlConfigHC.Elements.LeftMeter.HPLabelSide == "left")
+					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.x = -45;
+				else if (xmlConfigHC.Elements.LeftMeter.HPLabelSide == "right")
+					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.x = 325;
+					
+				if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.APLabelSide == "left")
+					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.x = -321;
+				else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.APLabelSide == "right")
+					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.x = 43;
 				
 				if (xmlConfigHC.Colors.HUD.CustomCrosshair == "true")
 				{
@@ -1355,14 +1560,72 @@ package
 			}
 			catch (error:Error)
 			{
-				displayText("Error finding HUDColours configuration file. " + error.message.toString());
+				displayText("Error finding HUDEditor configuration file. " + error.message.toString());
 			}
 		} 
 		
 		private function displayText(_text:String):void
 		{
-			debugTextHC.text += _text + "\n";
+			//debugTextHC.text += _text + "\n"; 
+			debugTextHC.appendText(_text + "\n");
 		}
+		
+		/*
+			-
+			-
+			Removed some code here (that wasn't mine to distribute) which was for personal testing.
+			-
+			-
+		*/
+		
+		private function displayHENotification(header:String, title:String, body:String) : void
+		{
+			HUDNotification_mc.Internal_mc.messageBoxStarContainer.visible = false;
+			HUDNotification_mc.Internal_mc.HeaderText_tf.text = header;
+			HUDNotification_mc.Internal_mc.TitleText_tf.text = " " + title;
+			HUDNotification_mc.Internal_mc.BodyText_tf.text = " " + body;
+					
+			HUDNotification_mc.gotoAndPlay("FadeIn");
+			EventCloseTimer.addEventListener(TimerEvent.TIMER_COMPLETE,this.closePromptHandler);
+			timerResetAndStart(EventCloseTimer);
+		}
+		
+		private function timerResetAndStart(timer:Timer) : *
+		{
+			timer.reset();
+			timer.start();
+			return;
+		}
+		
+		public function closePromptHandler() : void
+		{
+			HUDNotification_mc.gotoAndPlay("FadeOut");
+		}
+		
+		function frame1() : *
+		{
+			stop();
+			HUDNotification_mc.visible = false;
+		}
+
+		function frame2() : *
+		{
+			stop();
+			HUDNotification_mc.visible = true;
+		}
+		
+
+		function frame3() : *
+		{
+			stop();
+		}
+		
+		function frame4() : *
+		{
+			stop();
+			HUDNotification_mc.visible = false;
+		}
+		
 	}
 	
 }
