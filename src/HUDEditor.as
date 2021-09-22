@@ -170,7 +170,27 @@ package
 		public var SubtitlesPos:Point = new Point ();
 		public var EnemyHealthScale:Number = 1;
 		public var EnemyHealthPos:Point = new Point ();
-
+		public var XPBarScale:Number = 1;
+		public var XPBarPos:Point = new Point ();
+		public var CritMeterScale:Number = 1;
+		public var CritMeterPos:Point = new Point ();
+		public var CurrencyScale:Number = 1;
+		public var CurrencyPos:Point = new Point ();
+		public var LevelUpAnimScale:Number = 1;
+		public var LevelUpAnimPos:Point = new Point ();
+		public var RepUpdatesScale:Number = 1;
+		public var RepUpdatesPos:Point = new Point ();
+		
+		public var TeamPanelPosPA:Point = new Point ();
+		public var HungerMeterPosPA:Point = new Point ();
+		public var ThirstMeterPosPA:Point = new Point ();
+		public var ExplosiveAmmoCountPosPA:Point = new Point ();
+		
+		public var TeamPanelScalePA:Number = 1;
+		public var HungerMeterScalePA:Number = 1;
+		public var ThirstMeterScalePA:Number = 1;
+		public var ExplosiveAmmoCountScalePA:Number = 1;
+		
 		private var reloadCount:int = 0;
 		
 		private static var rightmetersColorMatrix:ColorMatrixFilter = null;
@@ -219,6 +239,11 @@ package
 		private var oRollOverPos:Point = new Point();
 		private var oSubtitlePos:Point = new Point();
 		private var oEnemyHealthPos:Point = new Point();
+		private var oXPBarPos:Point = new Point();
+		private var oCritMeterPos:Point = new Point();
+		private var oCurrencyPos:Point = new Point();
+		private var oLevelUpAnimPos:Point = new Point();
+		private var oRepUpdatesPos:Point = new Point();
 		private var VisibilityChanged:int = 0;
 		
 		private var _CharInfo:Object;
@@ -227,6 +252,11 @@ package
 		
 		private var thirstPC:Number = 0;
 		private var hungerPC:Number = 0;
+		
+		private var inPowerArmor:Boolean = false;
+		private var powerArmorHUDEnabled:Boolean = false;
+		
+		private const maxScale:Number = 1.5;
 		
 		private var HUDNotification_mc:Object = new HUDEditor_HUDMessageItemBox;
 		private var EventCloseTimer:Timer;
@@ -251,7 +281,13 @@ package
 			{
 				oLeftMeterPos.x = topLevel.LeftMeters_mc.x;
 				oLeftMeterPos.y = topLevel.LeftMeters_mc.y;
-
+				
+				oRepUpdatesPos.x = topLevel.ReputationUpdates_mc.x;
+				oRepUpdatesPos.y = topLevel.ReputationUpdates_mc.y;
+				
+				oLevelUpAnimPos.x = topLevel.LevelUpAnimation_mc.x;
+				oLevelUpAnimPos.y = topLevel.LevelUpAnimation_mc.y;
+				
 				oAPMeterPos.x = topLevel.RightMeters_mc.ActionPointMeter_mc.x;
 				oAPMeterPos.y = topLevel.RightMeters_mc.ActionPointMeter_mc.y;
 				
@@ -309,6 +345,15 @@ package
 				oSubtitlePos.x = topLevel.BottomCenterGroup_mc.SubtitleText_mc.x;
 				oSubtitlePos.y = topLevel.BottomCenterGroup_mc.SubtitleText_mc.y;
 				
+				oXPBarPos.x = topLevel.HUDNotificationsGroup_mc.XPMeter_mc.x;
+				oXPBarPos.y = topLevel.HUDNotificationsGroup_mc.XPMeter_mc.y;
+				
+				oCritMeterPos.x = topLevel.BottomCenterGroup_mc.CritMeter_mc.x;
+				oCritMeterPos.y = topLevel.BottomCenterGroup_mc.CritMeter_mc.y;
+				
+				oCurrencyPos.x = topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.x;
+				oCurrencyPos.y = topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.y;
+				
 				oEnemyHealthPos.x = topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.x;
 				oEnemyHealthPos.y = topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.y;
 				
@@ -325,6 +370,7 @@ package
 				thirst.x = 240;
 				
 				Shared.AS3.Data.BSUIDataManager.Subscribe("HUDRightMetersData", onCharInfoUpd);
+				BSUIDataManager.Subscribe("HUDModeData",this.onHudModeDataChange);
 
 				
 				init();
@@ -438,6 +484,19 @@ package
 		
 		private function update(event:TimerEvent):void
 		{
+			/*
+			debugTextHC.text = "";
+			displayText("DEBUG MODE");
+			displayText("----------");
+			displayText("inPowerArmor: " + inPowerArmor.toString() + " powerArmorHUDEnabled: " + powerArmorHUDEnabled.toString());
+			displayText("ThirstMeterPosPA.x: " + ThirstMeterPosPA.x.toString() + " ThirstMeterPosPA.y: " + ThirstMeterPosPA.y.toString());
+			displayText("HungerMeterPosPA.x: " + HungerMeterPosPA.x.toString() + " HungerMeterPosPA.y: " + HungerMeterPosPA.y.toString());
+			displayText("topLevel.RightMeters_mc.HUDThirstMeter_mc.x: " + topLevel.RightMeters_mc.HUDThirstMeter_mc.x.toString() + " HUDThirstMeter_mc.y: " + topLevel.RightMeters_mc.HUDThirstMeter_mc.y.toString());
+			displayText("topLevel.RightMeters_mc.HUDHungerMeter_mc.x: " + topLevel.RightMeters_mc.HUDHungerMeter_mc.x.toString() + " HUDHungerMeter_mc.y: " + topLevel.RightMeters_mc.HUDHungerMeter_mc.y.toString());
+			displayText("----------");
+			*/
+			
+			
 			topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
 			if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
 			{
@@ -735,6 +794,129 @@ package
 			}
 			if (xmlConfigHC.Elements != undefined)
 			{
+				if (inPowerArmor == true && powerArmorHUDEnabled == true)
+				{
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.x = (oHungerMeterPos.x + HungerMeterPosPA.x);
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.y = (oHungerMeterPos.y + HungerMeterPosPA.y);
+
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.x = (oThirstMeterPos.x + ThirstMeterPosPA.x);
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.y = (oThirstMeterPos.y + ThirstMeterPosPA.y);
+					
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.x = (oExplosiveAmmoCountPos.x + ExplosiveAmmoCountPosPA.x);
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.y = (oExplosiveAmmoCountPos.y + ExplosiveAmmoCountPosPA.y);
+					
+					topLevel.getChildAt(16).x = (oTeamPanelPos.x + TeamPanelPosPA.x);
+					topLevel.getChildAt(16).y = (oTeamPanelPos.y + TeamPanelPosPA.y);
+				}
+				else
+				{
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.x = (oHungerMeterPos.x + HungerMeterPos.x);
+					topLevel.RightMeters_mc.HUDHungerMeter_mc.y = (oHungerMeterPos.y + HungerMeterPos.y);
+
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.x = (oThirstMeterPos.x + ThirstMeterPos.x);
+					topLevel.RightMeters_mc.HUDThirstMeter_mc.y = (oThirstMeterPos.y + ThirstMeterPos.y);
+					
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.x = (oExplosiveAmmoCountPos.x + ExplosiveAmmoCountPos.x);
+					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.y = (oExplosiveAmmoCountPos.y + ExplosiveAmmoCountPos.y);
+					
+					topLevel.getChildAt(16).x = (oTeamPanelPos.x + TeamPanelPos.x);
+					topLevel.getChildAt(16).y = (oTeamPanelPos.y + TeamPanelPos.y);
+				}
+				
+				if (inPowerArmor == true && powerArmorHUDEnabled == true)
+				{
+					if (HungerMeterScalePA <= maxScale)
+					{
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = HungerMeterScalePA;
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = HungerMeterScalePA;
+					}
+					else
+					{
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = 1;
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = 1;
+					}
+					
+					if (ThirstMeterScalePA <= maxScale)
+					{
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = ThirstMeterScalePA;
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = ThirstMeterScalePA;
+					}
+					else
+					{
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = 1;
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = 1;
+					}
+					
+					if (ExplosiveAmmoCountScalePA <= maxScale)
+					{
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = ExplosiveAmmoCountScalePA;
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = ExplosiveAmmoCountScalePA;
+					}
+					else
+					{
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = 1;
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = 1;
+					}
+					
+					if (TeamPanelScalePA <= maxScale)
+					{
+						topLevel.getChildAt(16).scaleX = TeamPanelScalePA;
+						topLevel.getChildAt(16).scaleY = TeamPanelScalePA;
+					}
+					else
+					{
+						topLevel.getChildAt(16).scaleX = 1;
+						topLevel.getChildAt(16).scaleY = 1;
+					}
+				}
+				else
+				{
+					if (HungerMeterScale <= maxScale)
+					{
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = HungerMeterScale;
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = HungerMeterScale;
+					}
+					else
+					{
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = 1;
+						topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = 1;
+					}
+					
+					if (ThirstMeterScale <= maxScale)
+					{
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = ThirstMeterScale;
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = ThirstMeterScale;
+					}
+					else
+					{
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = 1;
+						topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = 1;
+					}
+					
+					if (ExplosiveAmmoCountScale <= maxScale)
+					{
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = ExplosiveAmmoCountScale;
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = ExplosiveAmmoCountScale;
+					}
+					else
+					{
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = 1;
+						topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = 1;
+					}
+					
+					if (TeamPanelScale <= maxScale)
+					{
+						topLevel.getChildAt(16).scaleX = TeamPanelScale;
+						topLevel.getChildAt(16).scaleY = TeamPanelScale;
+					}
+					else
+					{
+						topLevel.getChildAt(16).scaleX = 1;
+						topLevel.getChildAt(16).scaleY = 1;
+					}
+					
+				}
+				
 				//Sneak
 				topLevel.TopCenterGroup_mc.getChildAt(0).x = (oSneakPos.x + SneakMeterPos.x);
 				topLevel.TopCenterGroup_mc.getChildAt(0).y = (oSneakPos.y + SneakMeterPos.y);
@@ -742,6 +924,8 @@ package
 				//LeftMeter
 				topLevel.LeftMeters_mc.x = (oLeftMeterPos.x + LeftMeterPos.x);
 				topLevel.LeftMeters_mc.y = (oLeftMeterPos.y + LeftMeterPos.y);
+				
+
 					
 				//RightMeters
 
@@ -751,23 +935,20 @@ package
 				topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.x = (oActiveEffectsPos.x + ActiveEffectsPos.x);
 				topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.y = (oActiveEffectsPos.y + ActiveEffectsPos.y);
 
-				topLevel.RightMeters_mc.HUDHungerMeter_mc.x = (oHungerMeterPos.x + HungerMeterPos.x);
-				topLevel.RightMeters_mc.HUDHungerMeter_mc.y = (oHungerMeterPos.y + HungerMeterPos.y);
-
-				topLevel.RightMeters_mc.HUDThirstMeter_mc.x = (oThirstMeterPos.x + ThirstMeterPos.x);
-				topLevel.RightMeters_mc.HUDThirstMeter_mc.y = (oThirstMeterPos.y + ThirstMeterPos.y);
-
 				topLevel.RightMeters_mc.AmmoCount_mc.x = (oAmmoCountPos.x + AmmoCountPos.x);
 				topLevel.RightMeters_mc.AmmoCount_mc.y = (oAmmoCountPos.y + AmmoCountPos.y);
-
-				topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.x = (oExplosiveAmmoCountPos.x + ExplosiveAmmoCountPos.x);
-				topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.y = (oExplosiveAmmoCountPos.y + ExplosiveAmmoCountPos.y);
 
 				topLevel.RightMeters_mc.FlashLightWidget_mc.x = (oFlashLightWidgetPos.x + FlashLightWidgetPos.x);
 				topLevel.RightMeters_mc.FlashLightWidget_mc.y = (oFlashLightWidgetPos.y + FlashLightWidgetPos.y);
 
 				topLevel.RightMeters_mc.LocalEmote_mc.x = (oEmotePos.x + EmotePos.x);
 				topLevel.RightMeters_mc.LocalEmote_mc.y = (oEmotePos.y + EmotePos.y);
+				
+				topLevel.ReputationUpdates_mc.x = (oLevelUpAnimPos.x + LevelUpAnimPos.x);
+				topLevel.ReputationUpdates_mc.y = (oLevelUpAnimPos.y + LevelUpAnimPos.y);
+				
+				topLevel.LevelUpAnimation_mc.x = (oRepUpdatesPos.x + RepUpdatesPos.x);
+				topLevel.LevelUpAnimation_mc.y = (oRepUpdatesPos.y + RepUpdatesPos.y);
 				
 				//QuickLoot
 				var tfTemp:* = topLevel.CenterGroup_mc.QuickContainerWidget_mc.ListHeaderAndBracket_mc.ContainerName_mc.textField_tf.getTextFormat();
@@ -800,13 +981,12 @@ package
 				topLevel.HUDNotificationsGroup_mc.Messages_mc.x = (oNotificationPos.x + NotificationPos.x);
 				topLevel.HUDNotificationsGroup_mc.Messages_mc.y = (oNotificationPos.y + NotificationPos.y);
 				
+				topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.x = (oCurrencyPos.x + CurrencyPos.x);
+				topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.y = (oCurrencyPos.y + CurrencyPos.y);
+				
 				//topRightQuest
 				topLevel.TopRightGroup_mc.QuestTracker.x = (oQuestPos.x + QuestPos.x);
 				topLevel.TopRightGroup_mc.QuestTracker.y = (oQuestPos.y + QuestPos.y);
-				
-				//TeamPanel
-				topLevel.getChildAt(16).x = (oTeamPanelPos.x + TeamPanelPos.x);
-				topLevel.getChildAt(16).y = (oTeamPanelPos.y + TeamPanelPos.y);
 				
 				//Fusion Core Meter (part of HUDRightMeters for some ungodly reason)
 				topLevel.RightMeters_mc.HUDFusionCoreMeter_mc.x = (oFusionPos.x + FusionPos.x);
@@ -814,6 +994,12 @@ package
 				
 				topLevel.BottomCenterGroup_mc.SubtitleText_mc.x = (oSubtitlePos.x + SubtitlesPos.x);
 				topLevel.BottomCenterGroup_mc.SubtitleText_mc.y = (oSubtitlePos.y + SubtitlesPos.y);
+				
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.x = (oXPBarPos.x + XPBarPos.x);
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.y = (oXPBarPos.y + XPBarPos.y);
+				
+				topLevel.BottomCenterGroup_mc.CritMeter_mc.x = (oCritMeterPos.x + CritMeterPos.x);
+				topLevel.BottomCenterGroup_mc.CritMeter_mc.y = (oCritMeterPos.y + CritMeterPos.y);
 				
 				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.x = (oEnemyHealthPos.x + EnemyHealthPos.x);
 				topLevel.TopCenterGroup_mc.EnemyHealthMeter_mc.y = (oEnemyHealthPos.y + EnemyHealthPos.y);
@@ -831,11 +1017,11 @@ package
 					watermark.visible = true;
 					CONFIG::debug
 					{
-						watermark.text = "HUDEditor v2.3pre EDIT MODE";
+						watermark.text = "HUDEditor v2.4pre EDIT MODE";
 					}
 					CONFIG::release
 					{
-						watermark.text = "HUDEditor v2.3 EDIT MODE";
+						watermark.text = "HUDEditor v2.4 EDIT MODE";
 					}
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
@@ -843,7 +1029,7 @@ package
 					CONFIG::debug
 					{
 						watermark.visible = true;
-						watermark.text = "HUDEditor v2.3pre TEST BUILD";
+						watermark.text = "HUDEditor v2.4pre TEST BUILD";
 						watermark.alpha = 0.30;
 						reloadCount = 0;
 					}
@@ -1013,6 +1199,26 @@ package
 				ThirstMeterPos.x = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.X;
 				ThirstMeterPos.y = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.Y;
 				
+				HungerMeterPosPA.x = xmlConfigHC.Elements.RightMeter.Parts.HungerMeter.PowerArmor.X;
+				HungerMeterPosPA.y = xmlConfigHC.Elements.RightMeter.Parts.HungerMeter.PowerArmor.Y;
+				
+				ThirstMeterPosPA.x = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.PowerArmor.X;
+				ThirstMeterPosPA.y = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.PowerArmor.Y;
+				
+				ExplosiveAmmoCountPosPA.x = xmlConfigHC.Elements.RightMeter.Parts.ExplosiveAmmoCount.PowerArmor.X;
+				ExplosiveAmmoCountPosPA.y = xmlConfigHC.Elements.RightMeter.Parts.ExplosiveAmmoCount.PowerArmor.Y;
+				
+				TeamPanelPosPA.x = xmlConfigHC.Elements.TeamPanel.PowerArmor.X;
+				TeamPanelPosPA.y = xmlConfigHC.Elements.TeamPanel.PowerArmor.Y;
+				
+				HungerMeterScalePA = xmlConfigHC.Elements.RightMeter.Parts.HungerMeter.PowerArmor.Scale;
+				
+				ThirstMeterScalePA = xmlConfigHC.Elements.RightMeter.Parts.ThirstMeter.PowerArmor.Scale;
+				
+				ExplosiveAmmoCountScalePA = xmlConfigHC.Elements.RightMeter.Parts.ExplosiveAmmoCount.PowerArmor.Scale;
+				
+				TeamPanelScalePA = xmlConfigHC.Elements.TeamPanel.PowerArmor.Scale;
+				
 				AmmoCountScale = xmlConfigHC.Elements.RightMeter.Parts.AmmoCount.Scale;
 				AmmoCountPos.x = xmlConfigHC.Elements.RightMeter.Parts.AmmoCount.X;
 				AmmoCountPos.y = xmlConfigHC.Elements.RightMeter.Parts.AmmoCount.Y;
@@ -1065,6 +1271,14 @@ package
 				RollOverPos.x = xmlConfigHC.Elements.RollOver.X;
 				RollOverPos.y = xmlConfigHC.Elements.RollOver.Y;
 				
+				RepUpdatesScale = xmlConfigHC.Elements.ReputationUpdates.Scale;
+				RepUpdatesPos.x = xmlConfigHC.Elements.ReputationUpdates.X;
+				RepUpdatesPos.y = xmlConfigHC.Elements.ReputationUpdates.Y;
+				
+				LevelUpAnimScale = xmlConfigHC.Elements.LevelUpAnimation.Scale;
+				LevelUpAnimPos.x = xmlConfigHC.Elements.LevelUpAnimation.X;
+				LevelUpAnimPos.y = xmlConfigHC.Elements.LevelUpAnimation.Y;
+				
 				if (xmlConfigHC.Elements.Subtitles.Scale != undefined)
 					SubtitlesScale = xmlConfigHC.Elements.Subtitles.Scale;
 					
@@ -1078,6 +1292,46 @@ package
 				else
 					SubtitlesPos.y = 0;
 					
+				if (xmlConfigHC.Elements.XPBar.Scale != undefined)
+					XPBarScale = xmlConfigHC.Elements.XPBar.Scale;
+					
+				if (xmlConfigHC.Elements.XPBar.X != undefined)
+					XPBarPos.x = xmlConfigHC.Elements.XPBar.X;
+				else
+					XPBarPos.x = 0;
+					
+				if (xmlConfigHC.Elements.XPBar.Y != undefined)
+					XPBarPos.y = xmlConfigHC.Elements.XPBar.Y;
+				else
+					XPBarPos.y = 0;
+					
+				if (xmlConfigHC.Elements.CritMeter.Scale != undefined)
+					CritMeterScale = xmlConfigHC.Elements.CritMeter.Scale;
+					
+				if (xmlConfigHC.Elements.CritMeter.X != undefined)
+					CritMeterPos.x = xmlConfigHC.Elements.CritMeter.X;
+				else
+					CritMeterPos.x = 0;
+					
+				if (xmlConfigHC.Elements.CritMeter.Y != undefined)
+					CritMeterPos.y = xmlConfigHC.Elements.CritMeter.Y;
+				else
+					CritMeterPos.y = 0;
+					
+				if (xmlConfigHC.Elements.CurrencyUpdates.Scale != undefined)
+					CurrencyScale = xmlConfigHC.Elements.CurrencyUpdates.Scale;
+					
+				if (xmlConfigHC.Elements.CurrencyUpdates.X != undefined)
+					CurrencyPos.x = xmlConfigHC.Elements.CurrencyUpdates.X;
+				else
+					CurrencyPos.x = 0;
+					
+				if (xmlConfigHC.Elements.CurrencyUpdates.Y != undefined)
+					CurrencyPos.y = xmlConfigHC.Elements.CurrencyUpdates.Y;
+				else
+					CurrencyPos.y = 0;
+					
+					
 				if (xmlConfigHC.Elements.EnemyHealthMeter.Scale != undefined)
 					EnemyHealthScale = xmlConfigHC.Elements.EnemyHealthMeter.Scale;
 					
@@ -1090,6 +1344,7 @@ package
 					EnemyHealthPos.y = xmlConfigHC.Elements.EnemyHealthMeter.Y;
 				else
 					EnemyHealthPos.y = 0;
+					
 			}
 			var hudHUEradsbarfinal:* = hudHUEradsbar - hudHUEleftmeters;
 			var hudHUEteamradsbarfinal:* = hudHUEteamrads - hudHUEteam;
@@ -1194,7 +1449,6 @@ package
 		
 		private function initializeStaticElementsProps():void
 		{
-			const maxScale:Number = 1.5;
 			
 			if (xmlConfigHC.Elements != undefined)
 			{
@@ -1242,28 +1496,6 @@ package
 					topLevel.RightMeters_mc.HUDActiveEffectsWidget_mc.scaleY = 1;
 				}
 				
-				if (HungerMeterScale <= maxScale)
-				{
-					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = HungerMeterScale;
-					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = HungerMeterScale;
-				}
-				else
-				{
-					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleX = 1;
-					topLevel.RightMeters_mc.HUDHungerMeter_mc.scaleY = 1;
-				}
-				
-				if (ThirstMeterScale <= maxScale)
-				{
-					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = ThirstMeterScale;
-					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = ThirstMeterScale;
-				}
-				else
-				{
-					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleX = 1;
-					topLevel.RightMeters_mc.HUDThirstMeter_mc.scaleY = 1;
-				}
-				
 				if (AmmoCountScale <= maxScale)
 				{
 					topLevel.RightMeters_mc.AmmoCount_mc.scaleX = AmmoCountScale;
@@ -1275,15 +1507,26 @@ package
 					topLevel.RightMeters_mc.AmmoCount_mc.scaleY = 1;
 				}
 				
-				if (ExplosiveAmmoCountScale <= maxScale)
+				if (LevelUpAnimScale <= maxScale)
 				{
-					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = ExplosiveAmmoCountScale;
-					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = ExplosiveAmmoCountScale;
+					topLevel.LevelUpAnimation_mc.scaleX = LevelUpAnimScale;
+					topLevel.LevelUpAnimation_mc.scaleY = LevelUpAnimScale;
 				}
 				else
 				{
-					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleX = 1;
-					topLevel.RightMeters_mc.ExplosiveAmmoCount_mc.scaleY = 1;
+					topLevel.LevelUpAnimation_mc.scaleX = 1;
+					topLevel.LevelUpAnimation_mc.scaleY = 1;
+				}
+				
+				if (RepUpdatesScale <= maxScale)
+				{
+					topLevel.ReputationUpdates_mc.scaleX = RepUpdatesScale;
+					topLevel.ReputationUpdates_mc.scaleY = RepUpdatesScale;
+				}
+				else
+				{
+					topLevel.ReputationUpdates_mc.scaleX = 1;
+					topLevel.ReputationUpdates_mc.scaleY = 1;
 				}
 				
 				if (FlashLightWidgetScale <= maxScale)
@@ -1368,6 +1611,48 @@ package
 					}
 				}
 				
+				if (xmlConfigHC.Elements.CritMeter.Scale != undefined)
+				{
+					if (CritMeterScale <= maxScale)
+					{
+						topLevel.BottomCenterGroup_mc.CritMeter_mc.scaleX = CritMeterScale;
+						topLevel.BottomCenterGroup_mc.CritMeter_mc.scaleY = CritMeterScale;
+					}
+					else
+					{
+						topLevel.BottomCenterGroup_mc.CritMeter_mc.scaleX = 1;
+						topLevel.BottomCenterGroup_mc.CritMeter_mc.scaleY = 1;
+					}
+				}
+				
+				if (xmlConfigHC.Elements.CurrencyUpdates.Scale != undefined)
+				{
+					if (CurrencyScale <= maxScale)
+					{
+						topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.scaleX = CurrencyScale;
+						topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.scaleY = CurrencyScale;
+					}
+					else
+					{
+						topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.scaleX = 1;
+						topLevel.HUDNotificationsGroup_mc.CurrencyUpdates_mc.scaleY = 1;
+					}
+				}
+				
+				if (xmlConfigHC.Elements.XPBar.Scale != undefined)
+				{
+					if (CritMeterScale <= maxScale)
+					{
+						topLevel.HUDNotificationsGroup_mc.XPMeter_mc.scaleX = XPBarScale;
+						topLevel.HUDNotificationsGroup_mc.XPMeter_mc.scaleY = XPBarScale;
+					}
+					else
+					{
+						topLevel.HUDNotificationsGroup_mc.XPMeter_mc.scaleX = 1;
+						topLevel.HUDNotificationsGroup_mc.XPMeter_mc.scaleY = 1;
+					}
+				}
+				
 				if (xmlConfigHC.Elements.EnemyHealthMeter.Scale != undefined)
 				{
 					if (EnemyHealthScale <= maxScale)
@@ -1428,16 +1713,7 @@ package
 					topLevel.AnnounceEventWidget_mc.scaleX = 1;
 					topLevel.AnnounceEventWidget_mc.scaleY = 1;
 				}
-				if (TeamPanelScale <= maxScale)
-				{
-					topLevel.getChildAt(16).scaleX = TeamPanelScale;
-					topLevel.getChildAt(16).scaleY = TeamPanelScale;
-				}
-				else
-				{
-					topLevel.getChildAt(16).scaleX = 1;
-					topLevel.getChildAt(16).scaleY = 1;
-				}
+
 			}
 			if (xmlConfigHC.Colors.HUD.EnableRecoloring == "true")
 			{
@@ -1600,6 +1876,13 @@ package
 		public function closePromptHandler() : void
 		{
 			HUDNotification_mc.gotoAndPlay("FadeOut");
+		}
+		
+		private function onHudModeDataChange(param1:FromClientDataEvent) : *
+		{
+			inPowerArmor = param1.data.inPowerArmor;
+			powerArmorHUDEnabled = param1.data.powerArmorHUDEnabled;
+
 		}
 		
 		function frame1() : *
