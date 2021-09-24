@@ -22,8 +22,9 @@ package
 	public class HUDEditor extends MovieClip 
 	{
 		[Embed(source = "hudmenu.swf", symbol = "HUDMessageItemBox")]
-
 		private var HUDMessageItemBox:Class;
+		
+		
 		
 		private const PercentMax:Number = 1.0;
 		
@@ -259,6 +260,7 @@ package
 		private const maxScale:Number = 1.5;
 		
 		private var HUDNotification_mc:Object = new HUDEditor_HUDMessageItemBox;
+		private var XPMeterTest:Object = new HUDEditor_HUDMessageItemBox;
 		private var EventCloseTimer:Timer;
 		
 		public function HUDEditor() 
@@ -361,10 +363,11 @@ package
 				topLevel.RightMeters_mc.HUDHungerMeter_mc.addChild(hunger);
 				
 				topLevel.HUDNotificationsGroup_mc.Messages_mc.addChild(HUDNotification_mc);
+				//topLevel.ReputationUpdates_mc.addChild(XPMeterTest);
+				
 				HUDNotification_mc.y += 150;
 				HUDNotification_mc.addFrameScript(0, frame1, 5, frame2, 15, frame3, 16, frame3, 170, frame4);
 				HUDNotification_mc.gotoAndStop("Reset");
-
 				
 				hunger.x = 240;
 				thirst.x = 240;
@@ -494,9 +497,29 @@ package
 			displayText("topLevel.RightMeters_mc.HUDThirstMeter_mc.x: " + topLevel.RightMeters_mc.HUDThirstMeter_mc.x.toString() + " HUDThirstMeter_mc.y: " + topLevel.RightMeters_mc.HUDThirstMeter_mc.y.toString());
 			displayText("topLevel.RightMeters_mc.HUDHungerMeter_mc.x: " + topLevel.RightMeters_mc.HUDHungerMeter_mc.x.toString() + " HUDHungerMeter_mc.y: " + topLevel.RightMeters_mc.HUDHungerMeter_mc.y.toString());
 			displayText("----------");
+			
+			
+			for (var debugi:int = 0; debugi < topLevel.ReputationUpdates_mc.numChildren; debugi++ )
+			{
+				topLevel.ReputationUpdates_mc.getChildAt(debugi).visible = true;
+				for (var debugii:int = 0; debugii < topLevel.ReputationUpdates_mc.getChildAt(debugi).numChildren; debugii++ )
+				{
+					topLevel.ReputationUpdates_mc.getChildAt(debugi).getChildAt(debugii).visible = true;
+				}
+			}
 			*/
 			
-			
+			//topLevel.LevelUpAnimation_mc.gotoAndStop(80);
+			if (xmlConfigHC.dbg.e != undefined && xmlConfigHC.dbg.e == "191x7")
+			{
+				debugTextHC.text = "";
+				displayText("DEBUG MODE");
+				displayText("----------");
+				displayText("reloadCount: " + reloadCount.toString());
+				displayText("----------");
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.alpha = 1;
+				topLevel.LevelUpAnimation_mc.gotoAndStop("80");
+			}
 			topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
 			if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
 			{
@@ -944,11 +967,11 @@ package
 				topLevel.RightMeters_mc.LocalEmote_mc.x = (oEmotePos.x + EmotePos.x);
 				topLevel.RightMeters_mc.LocalEmote_mc.y = (oEmotePos.y + EmotePos.y);
 				
-				topLevel.ReputationUpdates_mc.x = (oLevelUpAnimPos.x + LevelUpAnimPos.x);
-				topLevel.ReputationUpdates_mc.y = (oLevelUpAnimPos.y + LevelUpAnimPos.y);
+				topLevel.LevelUpAnimation_mc.x = (oLevelUpAnimPos.x + LevelUpAnimPos.x);
+				topLevel.LevelUpAnimation_mc.y = (oLevelUpAnimPos.y + LevelUpAnimPos.y);
 				
-				topLevel.LevelUpAnimation_mc.x = (oRepUpdatesPos.x + RepUpdatesPos.x);
-				topLevel.LevelUpAnimation_mc.y = (oRepUpdatesPos.y + RepUpdatesPos.y);
+				topLevel.ReputationUpdates_mc.x = (oRepUpdatesPos.x + RepUpdatesPos.x);
+				topLevel.ReputationUpdates_mc.y = (oRepUpdatesPos.y + RepUpdatesPos.y);
 				
 				//QuickLoot
 				var tfTemp:* = topLevel.CenterGroup_mc.QuickContainerWidget_mc.ListHeaderAndBracket_mc.ContainerName_mc.textField_tf.getTextFormat();
@@ -1017,11 +1040,11 @@ package
 					watermark.visible = true;
 					CONFIG::debug
 					{
-						watermark.text = "HUDEditor v2.4pre EDIT MODE";
+						watermark.text = "HUDEditor v2.4.1pre EDIT MODE";
 					}
 					CONFIG::release
 					{
-						watermark.text = "HUDEditor v2.4 EDIT MODE";
+						watermark.text = "HUDEditor v2.4.1 EDIT MODE";
 					}
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
@@ -1029,7 +1052,7 @@ package
 					CONFIG::debug
 					{
 						watermark.visible = true;
-						watermark.text = "HUDEditor v2.4pre TEST BUILD";
+						watermark.text = "HUDEditor v2.4.1pre TEST BUILD";
 						watermark.alpha = 0.30;
 						reloadCount = 0;
 					}
@@ -1909,6 +1932,19 @@ package
 			HUDNotification_mc.visible = false;
 		}
 		
+		public function set levelUpVisible(param1:Boolean) : void
+		{
+			if(param1)
+			{
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.gotoAndStop("levelup");
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.NumberText.visible = false;
+			}
+			else
+			{
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.gotoAndStop("xp");
+				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.NumberText.visible = true;
+			}
+		}
 	}
 	
 }
