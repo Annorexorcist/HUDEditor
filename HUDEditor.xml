@@ -179,6 +179,11 @@
 			<X>0</X>
 			<Y>0</Y>
 		</EnemyHealthMeter>
+        <HitMarker>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</HitMarker>
 	</Elements>
 	<!--
 		A bit of a small explaination for the options:
