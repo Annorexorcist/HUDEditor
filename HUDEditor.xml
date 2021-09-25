@@ -73,11 +73,21 @@
 					<Scale>1</Scale>
 					<X>0</X>
 					<Y>0</Y>
+					<PowerArmor>
+						<Scale>1</Scale>
+						<X>0</X>
+						<Y>0</Y>
+					</PowerArmor>
 				</HungerMeter>
 				<ThirstMeter>
 					<Scale>1</Scale>
 					<X>0</X>
 					<Y>0</Y>
+					<PowerArmor>
+						<Scale>1</Scale>
+						<X>0</X>
+						<Y>0</Y>
+					</PowerArmor>
 				</ThirstMeter>
 				<AmmoCount>
 					<Scale>1</Scale>
@@ -88,6 +98,11 @@
 					<Scale>1</Scale>
 					<X>0</X>
 					<Y>0</Y>
+					<PowerArmor>
+						<Scale>1</Scale>
+						<X>0</X>
+						<Y>0</Y>
+					</PowerArmor>
 				</ExplosiveAmmoCount>	
 				<FlashLightWidget>
 					<Scale>1</Scale>	
@@ -118,6 +133,11 @@
 			<Scale>1</Scale>
 			<X>0</X>
 			<Y>0</Y>
+			<PowerArmor>
+				<Scale>1</Scale>
+				<X>0</X>
+				<Y>0</Y>
+			</PowerArmor>
 		</TeamPanel>
 		<FusionCoreMeter>
 			<Scale>1</Scale>
@@ -129,6 +149,31 @@
 			<X>0</X>
 			<Y>0</Y>
 		</Subtitles>
+		<XPBar>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</XPBar>
+		<CritMeter>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</CritMeter>
+		<CurrencyUpdates>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</CurrencyUpdates>
+		<LevelUpAnimation>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</LevelUpAnimation>
+		<ReputationUpdates>
+			<Scale>1</Scale>
+			<X>0</X>
+			<Y>0</Y>
+		</ReputationUpdates>
 		<EnemyHealthMeter>
 			<Scale>1</Scale>
 			<X>0</X>
@@ -190,7 +235,7 @@
 			<Saturation>0</Saturation>
 			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
 			<RadsBarRGB>F67259</RadsBarRGB>
-			<RadsBarBrightness>-10</RadsBarBrightness>
+			<RadsBarBrightness>0</RadsBarBrightness>
 			<RadsBarContrast>0</RadsBarContrast>
 			<RadsBarSaturation>0</RadsBarSaturation>
 		</LeftMeters>
@@ -264,7 +309,7 @@
 			<Saturation>0</Saturation>
 			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
 			<RadsBarRGB>F67259</RadsBarRGB>
-			<RadsBarBrightness>-10</RadsBarBrightness>
+			<RadsBarBrightness>0</RadsBarBrightness>
 			<RadsBarContrast>0</RadsBarContrast>
 			<RadsBarSaturation>0</RadsBarSaturation>
 		</Team>
