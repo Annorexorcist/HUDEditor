@@ -181,6 +181,8 @@ package
 		public var LevelUpAnimPos:Point = new Point ();
 		public var RepUpdatesScale:Number = 1;
 		public var RepUpdatesPos:Point = new Point ();
+		public var HitMarkerScale:Number = 1;
+		public var HitMarkerPos:Point = new Point ();
 		
 		public var TeamPanelPosPA:Point = new Point ();
 		public var HungerMeterPosPA:Point = new Point ();
@@ -245,6 +247,7 @@ package
 		private var oCurrencyPos:Point = new Point();
 		private var oLevelUpAnimPos:Point = new Point();
 		private var oRepUpdatesPos:Point = new Point();
+		private var oHitMarkerPos:Point = new Point();
 		private var VisibilityChanged:int = 0;
 		
 		private var _CharInfo:Object;
@@ -286,6 +289,9 @@ package
 				
 				oRepUpdatesPos.x = topLevel.ReputationUpdates_mc.x;
 				oRepUpdatesPos.y = topLevel.ReputationUpdates_mc.y;
+				
+				oHitMarkerPos.x = topLevel.CenterGroup_mc.HitIndicator_mc.x;
+				oHitMarkerPos.y = topLevel.CenterGroup_mc.HitIndicator_mc.y;
 				
 				oLevelUpAnimPos.x = topLevel.LevelUpAnimation_mc.x;
 				oLevelUpAnimPos.y = topLevel.LevelUpAnimation_mc.y;
@@ -973,6 +979,9 @@ package
 				topLevel.ReputationUpdates_mc.x = (oRepUpdatesPos.x + RepUpdatesPos.x);
 				topLevel.ReputationUpdates_mc.y = (oRepUpdatesPos.y + RepUpdatesPos.y);
 				
+				topLevel.CenterGroup_mc.HitIndicator_mc.x = (oHitMarkerPos.x + HitMarkerPos.x);
+				topLevel.CenterGroup_mc.HitIndicator_mc.y = (oHitMarkerPos.y + HitMarkerPos.y);
+				
 				//QuickLoot
 				var tfTemp:* = topLevel.CenterGroup_mc.QuickContainerWidget_mc.ListHeaderAndBracket_mc.ContainerName_mc.textField_tf.getTextFormat();
 				if (tfTemp.align == "left")
@@ -1298,6 +1307,10 @@ package
 				RepUpdatesPos.x = xmlConfigHC.Elements.ReputationUpdates.X;
 				RepUpdatesPos.y = xmlConfigHC.Elements.ReputationUpdates.Y;
 				
+				HitMarkerScale = xmlConfigHC.Elements.HitMarker.Scale;
+				HitMarkerPos.x = xmlConfigHC.Elements.HitMarker.X;
+				HitMarkerPos.y = xmlConfigHC.Elements.HitMarker.Y;
+				
 				LevelUpAnimScale = xmlConfigHC.Elements.LevelUpAnimation.Scale;
 				LevelUpAnimPos.x = xmlConfigHC.Elements.LevelUpAnimation.X;
 				LevelUpAnimPos.y = xmlConfigHC.Elements.LevelUpAnimation.Y;
@@ -1550,6 +1563,17 @@ package
 				{
 					topLevel.ReputationUpdates_mc.scaleX = 1;
 					topLevel.ReputationUpdates_mc.scaleY = 1;
+				}
+				
+				if (HitMarkerScale <= maxScale)
+				{
+					topLevel.CenterGroup_mc.HitIndicator_mc.scaleX = HitMarkerScale;
+					topLevel.CenterGroup_mc.HitIndicator_mc.scaleY = HitMarkerScale;
+				}
+				else
+				{
+					topLevel.CenterGroup_mc.HitIndicator_mc.scaleX = 1;
+					topLevel.CenterGroup_mc.HitIndicator_mc.scaleY = 1;
 				}
 				
 				if (FlashLightWidgetScale <= maxScale)
