@@ -9,7 +9,6 @@ package
    import flash.text.*;
    import flash.utils.*;
    import Shared.GlobalFunc;
-  
 
 	/**
 	 * ...
@@ -249,6 +248,7 @@ package
 		private var oRepUpdatesPos:Point = new Point();
 		private var oHitMarkerPos:Point = new Point();
 		private var VisibilityChanged:int = 0;
+		private var iniLoader:URLLoader;
 		
 		private var _CharInfo:Object;
 		
@@ -467,6 +467,8 @@ package
 		{
 			try
 			{
+				//gamepass fix
+				//../../../../ should equal the path next to ModifiableWindowsApps (up 4 levels from ModifiableWindowsApps/Fallout76/Data/interface
 				xmlLoaderHC.load(new URLRequest("../HUDEditor.xml"));
 				return;
 			}
@@ -516,15 +518,58 @@ package
 			*/
 			
 			//topLevel.LevelUpAnimation_mc.gotoAndStop(80);
+			
+			if (xmlConfigHC.Elements.LeftMeter.ShowHPLabel == "false")
+				topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.DisplayText_tf.text = "";
+			else if (xmlConfigHC.Elements.LeftMeter.ShowHPLabel == "true")
+				topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.DisplayText_tf.text = "HP";
+				
+			if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowAPLabel == "false")
+				topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.DisplayText_tf.text = "";
+			else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowAPLabel == "true")
+				topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.DisplayText_tf.text = "AP";
+				
+			if (xmlConfigHC.Elements.LeftMeter.ShowBarBG == "false")
+				topLevel.LeftMeters_mc.HPMeter_mc.getChildAt(0).visible = false;
+			else if (xmlConfigHC.Elements.LeftMeter.ShowBarBG == "true")
+				topLevel.LeftMeters_mc.HPMeter_mc.getChildAt(0).visible = true;
+				
+			if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowBarBG == "false")
+				topLevel.RightMeters_mc.ActionPointMeter_mc.APBarFrame_mc.visible = false;
+			else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowBarBG == "true")
+				topLevel.RightMeters_mc.ActionPointMeter_mc.APBarFrame_mc.visible = true;
+				
+			if (xmlConfigHC.Elements.LeftMeter.HPLabelSide == "left")
+				topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.x = -45;
+			else if (xmlConfigHC.Elements.LeftMeter.HPLabelSide == "right")
+				topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.x = 325;
+				
+			if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.APLabelSide == "left")
+				topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.x = -321;
+			else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.APLabelSide == "right")
+				topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.x = 43;
+					
 			if (xmlConfigHC.dbg.e != undefined && xmlConfigHC.dbg.e == "191x7")
 			{
+				if (reloadCount == 149)
+				{
+					try
+					{
+						iniLoader.load(new URLRequest("../fanfarefree.ini"));
+					}
+					catch(error:Error)
+					{
+						displayError("ERROR: There was an error loading your Fanfare Free configuration file!");
+					}
+				}
 				debugTextHC.text = "";
 				displayText("DEBUG MODE");
 				displayText("----------");
 				displayText("reloadCount: " + reloadCount.toString());
+				displayText("ALPHA: ");
+				displayText("BETA: ");
+				displayText("CHARLIE: ");
 				displayText("----------");
-				topLevel.HUDNotificationsGroup_mc.XPMeter_mc.alpha = 1;
-				topLevel.LevelUpAnimation_mc.gotoAndStop("80");
 			}
 			topLevel.BottomCenterGroup_mc.CompassWidget_mc.filters = [bccompassColorMatrix];
 			if (xmlConfigHC.Colors.HUD.TZMapMarkers == "true")
@@ -1049,11 +1094,11 @@ package
 					watermark.visible = true;
 					CONFIG::debug
 					{
-						watermark.text = "HUDEditor v2.4.1pre EDIT MODE";
+						watermark.text = "HUDEditor v2.5pre EDIT MODE";
 					}
 					CONFIG::release
 					{
-						watermark.text = "HUDEditor v2.4.1 EDIT MODE";
+						watermark.text = "HUDEditor v2.5 EDIT MODE";
 					}
 				}
 				else if (xmlConfigHC.Colors.HUD.EditMode == "false")
@@ -1061,7 +1106,7 @@ package
 					CONFIG::debug
 					{
 						watermark.visible = true;
-						watermark.text = "HUDEditor v2.4.1pre TEST BUILD";
+						watermark.text = "HUDEditor v2.5pre TEST BUILD";
 						watermark.alpha = 0.30;
 						reloadCount = 0;
 					}
@@ -1807,44 +1852,7 @@ package
 				topLevel.CenterGroup_mc.getChildAt(0).filters = [centerColorMatrix];
 				
 				
-				if (xmlConfigHC.Elements.LeftMeter.ShowHPLabel == "false")
-					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.DisplayText_tf.text = "";
-				else if (xmlConfigHC.Elements.LeftMeter.ShowHPLabel == "true")
-					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.DisplayText_tf.text = "HP";
-					
-				if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowAPLabel == "false")
-					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.DisplayText_tf.text = "";
-				else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowAPLabel == "true")
-					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.DisplayText_tf.text = "AP";
-					
-				if (xmlConfigHC.Elements.LeftMeter.ShowBarBG == "false")
-					topLevel.LeftMeters_mc.HPMeter_mc.getChildAt(0).visible = false;
-				else if (xmlConfigHC.Elements.LeftMeter.ShowBarBG == "true")
-					topLevel.LeftMeters_mc.HPMeter_mc.getChildAt(0).visible = true;
-					
-				if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowBarBG == "false")
-					topLevel.RightMeters_mc.ActionPointMeter_mc.APBarFrame_mc.visible = false;
-				else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.ShowBarBG == "true")
-					topLevel.RightMeters_mc.ActionPointMeter_mc.APBarFrame_mc.visible = true;
-					
-				if (xmlConfigHC.Elements.LeftMeter.HPLabelSide == "left")
-					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.x = -45;
-				else if (xmlConfigHC.Elements.LeftMeter.HPLabelSide == "right")
-					topLevel.LeftMeters_mc.HPMeter_mc.DisplayText_mc.x = 325;
-					
-				if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.APLabelSide == "left")
-					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.x = -321;
-				else if (xmlConfigHC.Elements.RightMeter.Parts.APMeter.APLabelSide == "right")
-					topLevel.RightMeters_mc.ActionPointMeter_mc.DisplayText_mc.x = 43;
-				
-				if (xmlConfigHC.Colors.HUD.CustomCrosshair == "true")
-				{
-					topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = null;
-				}
-				else if (xmlConfigHC.Colors.HUD.CustomCrosshair == "false")
-				{
-					topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = [centerColorMatrix];
-				}
+				topLevel.CenterGroup_mc.HUDCrosshair_mc.filters = null;
 				
 				topLevel.CenterGroup_mc.getChildAt(5).filters = [centerColorMatrix];
 				topLevel.CenterGroup_mc.getChildAt(1).alpha = Number(xmlConfigHC.Colors.HUD.CrosshairOpacity);
