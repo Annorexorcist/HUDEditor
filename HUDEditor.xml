@@ -68,6 +68,10 @@
 					<Scale>1</Scale>
 					<X>0</X>
 					<Y>0</Y>
+					<PowerArmor>
+						<X>0</X>
+						<Y>0</Y>
+					</PowerArmor>
 				</ActiveEffects>
 				<HungerMeter>
 					<Scale>1</Scale>
@@ -99,12 +103,14 @@
 					<X>0</X>
 					<Y>0</Y>
 					<PowerArmor>
-						<Scale>1</Scale>
 						<X>0</X>
 						<Y>0</Y>
 					</PowerArmor>
 				</ExplosiveAmmoCount>	
 				<FlashLightWidget>
+					<!--There is no FlashLight icon in Fallout 76 by default...
+						Enable this setting to restore it and enable scaling and moving it-->
+					<RestoreFlashLightIcon>false</RestoreFlashLightIcon>
 					<Scale>1</Scale>	
 					<X>0</X>
 					<Y>0</Y>
@@ -178,6 +184,13 @@
 			<Scale>1</Scale>
 			<X>0</X>
 			<Y>0</Y>
+			<!--
+				Shows health percentage near the bar, a la Show Health Re-Redux
+			-->
+			<ShowHealthPercent>false</ShowHealthPercent>
+			
+			<!-- top, bottom, left, right -->
+			<HealthPercentLocation>top</HealthPercentLocation>
 		</EnemyHealthMeter>
         <HitMarker>
 			<Scale>1</Scale>
@@ -189,7 +202,7 @@
 		A bit of a small explaination for the options:
 		RGB: Color you want in hex form (FFFFCB is the default HUD color)
 		NOTE: DO NOT use very dark or very bright colors! Try to pick something pastel or less in saturation.
-		Brightness, Contrast, Saturation: self explainatory. Absolute ranges are from -100 to 100, but -50 to 50 is the highly recommended min-max
+		Brightness, Contrast, Saturation: self explainatory. Absolute ranges are from -100 to 100, but 00 to 50 is the highly recommended min-max
 	-->
 	<Colors>
 		<!--Tints the hitmarker towards the given colour-->
@@ -214,8 +227,8 @@
 			<!--EditMode allows you to view changes to this file in real time-->
 			<EditMode>false</EditMode>
 			
-			<!--Set CustomCrosshair to true if you have CustomCrosshair installed-->
-			<CustomCrosshair>false</CustomCrosshair>
+			<!--DO NOT CHANGE THIS SETTING, IT WILL BE REMOVED AT A FUTURE TIME-->
+			<CustomCrosshair>true</CustomCrosshair>
 			
 			<!--You can set the opacity of the crosshair down below what the rest of the HUD is.-->
 			<CrosshairOpacity>1</CrosshairOpacity>
@@ -240,7 +253,7 @@
 			<Saturation>0</Saturation>
 			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
 			<RadsBarRGB>F67259</RadsBarRGB>
-			<RadsBarBrightness>0</RadsBarBrightness>
+			<RadsBarBrightness>-10</RadsBarBrightness>
 			<RadsBarContrast>0</RadsBarContrast>
 			<RadsBarSaturation>0</RadsBarSaturation>
 		</LeftMeters>
@@ -314,7 +327,7 @@
 			<Saturation>0</Saturation>
 			<!--remember, rads bar is light red/almost orange by default, radsbarRGB tints the bar towards your colour, might not be 100% accurate-->
 			<RadsBarRGB>F67259</RadsBarRGB>
-			<RadsBarBrightness>0</RadsBarBrightness>
+			<RadsBarBrightness>-10</RadsBarBrightness>
 			<RadsBarContrast>0</RadsBarContrast>
 			<RadsBarSaturation>0</RadsBarSaturation>
 		</Team>
