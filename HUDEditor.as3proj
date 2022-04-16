@@ -82,7 +82,14 @@
   <preBuildCommand />
   <!-- Executed after build -->
   <postBuildCommand alwaysRun="False">cmd.exe /c "copy $(OutputFile) D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\$(OutputName)"
-"D:\SteamLibrary\steamapps\common\Fallout 4OLD\Tools\Archive2\Archive2.exe" D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\hudmenu.swf,D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\HUDEditor.swf -c=D:\SteamLibrary\steamapps\common\Fallout76\Data\HUDEditor.ba2</postBuildCommand>
+cmd.exe /c "copy $(OutputFile) D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\PLMHudMenu.swf"
+"D:\SteamLibrary\steamapps\common\Fallout 4OLD\Tools\Archive2\Archive2.exe" D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\hudmenu.swf,D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\CustomCrosshair.swf,D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\HUDEditor.swf -c=D:\SteamLibrary\steamapps\common\Fallout76\Data\HUDEditor.ba2
+
+"D:\SteamLibrary\steamapps\common\Fallout 4OLD\Tools\Archive2\Archive2.exe" D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\HUDEditor.swf,D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\CustomCrosshair.swf -c=D:\SteamLibrary\steamapps\common\Fallout76\Data\HUDEditorStandalone.ba2
+
+"D:\SteamLibrary\steamapps\common\Fallout 4OLD\Tools\Archive2\Archive2.exe" D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\HUDMenu.SWF,D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\HUDEditor.swf -c=D:\SteamLibrary\steamapps\common\Fallout76\Data\HUDEditorNoCC.ba2
+
+"D:\SteamLibrary\steamapps\common\Fallout 4OLD\Tools\Archive2\Archive2.exe" D:\SteamLibrary\steamapps\common\Fallout76\Data\Interface\HUDEditor.swf -c=D:\SteamLibrary\steamapps\common\Fallout76\Data\HUDEditorStandaloneNoCC.ba2</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
